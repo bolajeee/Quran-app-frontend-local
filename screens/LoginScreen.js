@@ -10,6 +10,8 @@ import {
 } from "react-native";
 import { StatusBar } from "expo-status-bar";
 
+
+
 //icons
 import { Ionicons, Octicons, Fontisto } from "@expo/vector-icons";
 
@@ -40,7 +42,7 @@ import {
 
 const { primary, secondary, tertiary, darkLight, brand, green, red } = Colors;
 
-const LoginScreen = () => {
+const LoginScreen = ({navigation}) => {
   const [hidePassword, setHidePassword] = useState(true);
 
   return (
@@ -106,18 +108,14 @@ const LoginScreen = () => {
                     onPress={handleSubmit}
                     style={styles.googleButton}
                   >
-                    <Fontisto
-                      name="google"
-                      size={20}
-                      color={Colors.primary}
-                    />
+                    <Fontisto name="google" size={20} color={Colors.primary} />
                     <StyledButtonText google={true}>
                       Sign in with Google
                     </StyledButtonText>
                   </StyledButton>
                   <ExtraView style={styles.extraView}>
                     <ExtraText>Don't have an account?</ExtraText>
-                    <TextLink>
+                    <TextLink onPress={() => navigation.navigate("Signup")}>
                       <TextLinkContent>Sign Up</TextLinkContent>
                     </TextLink>
                   </ExtraView>

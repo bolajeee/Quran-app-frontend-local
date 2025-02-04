@@ -1,15 +1,21 @@
-import React from 'react'
-import {StatusBar} from 'expo-status-bar'
+import { createStackNavigator } from "@react-navigation/stack";
+import { NavigationContainer, NavigationIndependentTree} from "@react-navigation/native";
+import LoginScreen from "../screens/LoginScreen";
+import SignUpScreen from "../screens/SignupScreen";
 
-
-import LoginScreen from '../screens/LoginScreen'
-import { Colors, InnerContainer, PageLogo, PageTitle, StyledContainer } from '../components/styles'
+const Stack = createStackNavigator();
 
 const App = () => {
   return (
-    <LoginScreen />
-  )
-}
+     <NavigationIndependentTree>
+    <NavigationContainer>
+      <Stack.Navigator>
+        <Stack.Screen name="Login" component={LoginScreen} />
+        <Stack.Screen name="SignUp" component={SignUpScreen} />
+      </Stack.Navigator>
+      </NavigationContainer>
+      </NavigationIndependentTree>
+  );
+};
 
-export default App
-
+export default App;
