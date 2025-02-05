@@ -49,6 +49,7 @@ const LoginScreen = ({navigation}) => {
     <KeyboardAvoidingView
       behavior={Platform.OS === "ios" ? "padding" : "height"}
       style={{ flex: 1 }}
+
     >
       <ScrollView contentContainerStyle={{ flexGrow: 1 }}>
         <StyledContainer style={styles.container}>
