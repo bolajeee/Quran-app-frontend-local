@@ -12,7 +12,7 @@ const App = () => {
         initialRouteName="Login"
         screenOptions={{ headerShown: false }}
       >
-        <Stack.Screen name="Login" component={LoginScreen} />
+        <Stack.Screen name="Login" component={LoginScreen} headerShown={false} />
         <Stack.Screen name="Signup" component={SignUpScreen} />
       </Stack.Navigator>
     </NavigationContainer>
