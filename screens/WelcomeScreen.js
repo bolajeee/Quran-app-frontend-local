@@ -8,17 +8,23 @@ import {
   SafeAreaView,
   StatusBar,
 } from "react-native";
-import { Ionicons, Feather, MaterialIcons, Entypo } from "@expo/vector-icons";
-import { Colors, isDark, isLight } from "../components/styles";
+import {
+  Ionicons,
+  Feather,
+  MaterialIcons,
+  AntDesign,
+} from "@expo/vector-icons";
+import { Colors } from "../components/styles";
+import { useTheme } from "../components/themeContext";
 
 const { primary, secondary, tertiary, darkLight, brand, green, red } = Colors;
 
 const WelcomeScreen = ({ navigation }) => {
   const [activeTab, setActiveTab] = useState("Light");
-  const [isDarkMode, setIsDarkMode] = useState(false);
+
+  const { theme, setIsDarkMode } = useTheme();
 
   // Update theme based on isDarkMode. Assumes Theme has both light and dark keys.
-  const theme = isDarkMode ? isLight : isDark;
 
   const handleThemeChange = (mode) => {
     setActiveTab(mode);
@@ -160,10 +166,7 @@ const WelcomeScreen = ({ navigation }) => {
         <TouchableOpacity
           style={styles.navItem}
           onPress={() => {
-            handleActiveTab();
-            {
-              navigation.navigate(PrayerTime);
-            }
+            navigation.navigate("Prayer");
           }}
         >
           <MaterialIcons
@@ -174,7 +177,7 @@ const WelcomeScreen = ({ navigation }) => {
           <Text style={styles.navText}>Prayers</Text>
         </TouchableOpacity>
         <TouchableOpacity style={styles.navItem}>
-          <Entypo name="book" size={24} color={Colors.brand} />
+          <AntDesign name="book" size={24} color={Colors.brand} />
           <Text style={styles.navText}>Quran</Text>
         </TouchableOpacity>
         <TouchableOpacity style={styles.navItem}>

@@ -1,14 +1,299 @@
-import { StyleSheet, Text, View } from 'react-native'
-import React from 'react'
+import React from "react";
+import {
+  StyleSheet,
+  View,
+  Text,
+  TouchableOpacity,
+  SafeAreaView,
+  StatusBar,
+} from "react-native";
+import {
+  Ionicons,
+  MaterialCommunityIcons,
+  MaterialIcons,
+  
+  AntDesign,
+} from "@expo/vector-icons";
+import { Colors } from "../components/styles";
+import { useTheme } from "../components/themeContext";
 
-const PrayerTimeScreen = () => {
+const { primary, secondary, tertiary, darkLight, brand, green } = Colors;
+
+const PrayerTimeScreen = ({ navigation }) => {
+  const { theme } = useTheme();
+  const prayers = [
+    { name: "Fajr", time: "5:53 AM", icon: "volume-high" },
+    { name: "Sunrise", time: "7:04 AM", icon: "weather-sunset-up" },
+    {
+      name: "Dhuhr",
+      time: "1:00 PM",
+      icon: "volume-high",
+      countdown: "-1:40:20",
+    },
+    { name: "Asr", time: "4:22 PM", icon: "volume-high" },
+    { name: "Maghrib", time: "6:57 PM", icon: "volume-high" },
+    { name: "Isha'a", time: "8:04 PM", icon: "volume-high" },
+  ];
+
   return (
-    <View>
-      <Text>PrayerTimeScreen</Text>
-    </View>
-  )
-}
+    <SafeAreaView
+      style={[styles.container, { backgroundColor: theme.backgroundColor }]}
+    >
+      <StatusBar barStyle="light-content" />
 
-export default PrayerTimeScreen
+      {/* Header */}
+      <View style={styles.header}>
+        <Text style={[styles.headerTitle, { color: theme.textColor }]}>
+          Prayers
+        </Text>
+        <View style={styles.headerIcons}>
+          <TouchableOpacity style={styles.iconButton}>
+            <Ionicons
+              name="calendar-outline"
+              size={24}
+              color={theme.textColor}
+            />
+          </TouchableOpacity>
+          <TouchableOpacity style={styles.iconButton}>
+            <Ionicons
+              name="share-social-outline"
+              size={24}
+              color={theme.textColor}
+            />
+          </TouchableOpacity>
+        </View>
+      </View>
 
-const styles = StyleSheet.create({})
+      {/* Location Info */}
+      <View style={styles.locationInfo}>
+        <Text style={[styles.locationText, { color: theme.textColor }]}>
+          Lagos, Nigeria • Muslim World Leagu...(MWL) (18.0° / 17.0°)
+        </Text>
+      </View>
+
+      {/* Date Info */}
+      <View style={styles.dateInfo}>
+        <TouchableOpacity>
+          <Ionicons name="chevron-back" size={24} color={theme.textColor} />
+        </TouchableOpacity>
+        <View style={styles.dateTextContainer}>
+          <Text style={[styles.dateText, { color: theme.textColor }]}>
+            Today, February 5
+          </Text>
+          <Text style={[styles.hijriText, { color: theme.textColor }]}>
+            Sha'ban 6, 1446 AH
+          </Text>
+        </View>
+        <TouchableOpacity>
+          <Ionicons name="chevron-forward" size={24} color={theme.textColor} />
+        </TouchableOpacity>
+      </View>
+
+      {/* Prayer Times List */}
+      <View
+        style={[styles.prayerList, { backgroundColor: theme.listBackground }]}
+      >
+        {prayers.map((prayer, index) => (
+          <View
+            key={index}
+            style={[
+              styles.prayerItem,
+              { borderBottomColor: theme.cardBackground },
+            ]}
+          >
+            <View style={styles.prayerLeft}>
+              <MaterialCommunityIcons
+                name={prayer.icon}
+                size={24}
+                color={theme.textColor}
+              />
+              <Text style={[styles.prayerName, { color: theme.textColor }]}>
+                {prayer.name}
+              </Text>
+            </View>
+            <View style={styles.prayerRight}>
+              {prayer.countdown && (
+                <Text
+                  style={[styles.countdownText, { color: theme.textColor }]}
+                >
+                  {prayer.countdown}
+                </Text>
+              )}
+              <Text style={[styles.prayerTime, { color: theme.textColor }]}>
+                {prayer.time}
+              </Text>
+              {prayer.name === "Dhuhr" && (
+                <View style={styles.checkmark}>
+                  <Ionicons
+                    name="checkmark-circle"
+                    size={20}
+                    color={theme.textColor}
+                  />
+                </View>
+              )}
+            </View>
+          </View>
+        ))}
+      </View>
+
+      {/* Bottom Navigation */}
+      <View
+        style={[
+          styles.bottomNav,
+          {
+            backgroundColor: theme.listBackground,
+            borderTopColor: theme.cardBackground,
+          },
+        ]}
+      >
+        <TouchableOpacity style={styles.navItem}>
+          <MaterialIcons name="quiz" size={24} color={theme.iconColor} />
+          <Text style={[styles.navText, { color: theme.textColor }]}>Quiz</Text>
+        </TouchableOpacity>
+
+        <TouchableOpacity
+          style={styles.navItem}
+          onPress={() => navigation.navigate("Prayer")}
+        >
+          <MaterialIcons name="access-time" size={24} color={theme.iconColor} />
+          <Text style={[styles.navText, { color: theme.textColor }]}>
+            Prayers
+          </Text>
+        </TouchableOpacity>
+
+        <TouchableOpacity
+          style={styles.navItem}
+          onPress={() => navigation.navigate("Home")}
+        >
+          <AntDesign name="book" size={24} color={theme.iconColor} />
+          <Text style={[styles.navText, { color: theme.textColor }]}>
+            Quran
+          </Text>
+        </TouchableOpacity>
+
+        <TouchableOpacity style={styles.navItem}>
+          <MaterialIcons name="person" size={24} color={theme.iconColor} />
+          <Text style={[styles.navText, { color: theme.textColor }]}>
+            Profile
+          </Text>
+        </TouchableOpacity>
+      </View>
+    </SafeAreaView>
+  );
+};
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    backgroundColor: "#004225",
+  },
+  header: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+    padding: 16,
+    paddingTop: 20,
+  },
+  headerTitle: {
+    fontSize: 28,
+    fontWeight: "bold",
+    color: "white",
+  },
+  headerIcons: {
+    flexDirection: "row",
+    gap: 15,
+  },
+  iconButton: {
+    padding: 4,
+  },
+  locationInfo: {
+    paddingHorizontal: 16,
+    marginTop: 8,
+  },
+  locationText: {
+    color: "white",
+    fontSize: 16,
+  },
+  dateInfo: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
+    paddingHorizontal: 16,
+    marginTop: 24,
+    marginBottom: 24,
+  },
+  dateTextContainer: {
+    alignItems: "center",
+  },
+  dateText: {
+    color: "white",
+    fontSize: 20,
+    fontWeight: "600",
+  },
+  hijriText: {
+    color: "white",
+    fontSize: 16,
+    opacity: 0.9,
+    marginTop: 4,
+  },
+  prayerList: {
+    flex: 1,
+    borderTopLeftRadius: 30,
+    borderTopRightRadius: 30,
+    padding: 20,
+   
+  },
+  prayerItem: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+    paddingVertical: 16,
+    borderBottomWidth: 1,
+    borderBottomColor: "#eee",
+  },
+  prayerLeft: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 15,
+  },
+  prayerName: {
+    fontSize: 18,
+    
+  },
+  prayerRight: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 10,
+  },
+  countdownText: {
+    color: "#666",
+    fontSize: 16,
+  },
+  prayerTime: {
+    fontSize: 16,
+    color: "#333",
+    fontWeight: "500",
+  },
+  checkmark: {
+    backgroundColor: green,
+    borderRadius: 12,
+  },
+  bottomNav: {
+    flexDirection: "row",
+    justifyContent: "space-around",
+    padding: 16,
+    backgroundColor: Colors.primary,
+    borderTopWidth: 1,
+    borderTopColor: Colors.secondary,
+  },
+  navItem: {
+    alignItems: "center",
+  },
+  navText: {
+    fontSize: 12,
+    color: Colors.darkLight,
+    marginTop: 4,
+  },
+});
+
+export default PrayerTimeScreen;
