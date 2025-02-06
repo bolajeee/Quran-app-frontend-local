@@ -15,6 +15,20 @@ export const Colors = {
   red: "#EF4444",
 };
 
+export  const isLight = {
+  backgroundColor: "#1a1a1a",
+  textColor: "#ffffff",
+  cardBackground: "#333333",
+  listBackground: "#2a2a2a",
+};
+
+export const isDark = {
+  backgroundColor: "#004225",
+  textColor: Colors.primary,
+  cardBackground: "rgba(255,255,255,0.1)",
+  listBackground: Colors.primary,
+};
+
 const { primary, secondary, tertiary, darkLight, brand, green, red } = Colors;
 
 export const StyledContainer = styled.View`

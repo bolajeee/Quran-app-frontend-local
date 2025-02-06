@@ -45,11 +45,12 @@ const { primary, secondary, tertiary, darkLight, brand, green, red } = Colors;
 const LoginScreen = ({navigation}) => {
   const [hidePassword, setHidePassword] = useState(true);
 
+  
+
   return (
     <KeyboardAvoidingView
       behavior={Platform.OS === "ios" ? "padding" : "height"}
       style={{ flex: 1 }}
-
     >
       <ScrollView contentContainerStyle={{ flexGrow: 1 }}>
         <StyledContainer style={styles.container}>
@@ -98,7 +99,12 @@ const LoginScreen = ({navigation}) => {
 
                   <MsgBox>...</MsgBox>
                   <StyledButton
-                    onPress={handleSubmit}
+                    onPress={() => {
+                      handleSubmit();
+                      {
+                        navigation.navigate("Home");
+                      }
+                    }}
                     style={styles.loginButton}
                   >
                     <StyledButtonText>Login</StyledButtonText>
@@ -106,7 +112,9 @@ const LoginScreen = ({navigation}) => {
                   <Line style={styles.line} />
                   <StyledButton
                     google={true}
-                    onPress={handleSubmit}
+                    onPress={() => {
+                      handleSubmit();
+                    }}
                     style={styles.googleButton}
                   >
                     <Fontisto name="google" size={20} color={Colors.primary} />

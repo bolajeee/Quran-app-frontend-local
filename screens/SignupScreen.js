@@ -44,7 +44,7 @@ const SignUpScreen = ({ navigation }) => {
       style={{ flex: 1 }}
     >
       <ScrollView contentContainerStyle={{ flexGrow: 1 }}>
-        <StyledContainer>
+        <StyledContainer StyleSheet={styles.container}>
           <StatusBar style="dark" />
           <InnerContainer>
             <PageLogo
@@ -112,7 +112,15 @@ const SignUpScreen = ({ navigation }) => {
                   />
 
                   <MsgBox>...</MsgBox>
-                  <StyledButton onPress={handleSubmit}>
+                  <StyledButton
+                    onPress={() => {
+                      handleSubmit();
+                      {
+                        navigation.navigate("Home");
+                      }
+                    }}
+
+                  >
                     <StyledButtonText>Sign Up</StyledButtonText>
                   </StyledButton>
                   <Line />
@@ -157,7 +165,7 @@ const MyTextInput = ({
           <TouchableOpacity onPress={() => setHidePassword(!hidePassword)}>
             <RightIcon style={{ paddingBottom: 10 }}>
               <Ionicons
-                name={hidePassword ? "eye-off" : "eye"}
+                name={hidePassword ? "eye" : "eye-off"}
                 size={20}
                 color={Colors.darkLight}
               />
@@ -171,4 +179,15 @@ const MyTextInput = ({
 
 export default SignUpScreen;
 
-const styles = StyleSheet.create({});
+const styles = StyleSheet.create({
+  container: {
+    paddingTop: 0,
+  },
+  logo: {
+    width: 150,
+    height: 150,
+  },
+  signup: {
+    width: "100%",
+  },
+});
