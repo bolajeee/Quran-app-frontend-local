@@ -30,9 +30,12 @@ const WelcomeScreen = ({ navigation }) => {
     setActiveTab(mode);
     setIsDarkMode(mode === "Dark");
   };
-   const handleProfileNavigation = () => {
-     navigation.navigate("Profile");
-   };
+  const handleProfileNavigation = () => {
+    navigation.navigate("Profile");
+  };
+  const handlePrayerNavigation = () => {
+    navigation.navigate("Prayer");
+  };
 
   const surahs = [
     {
@@ -88,7 +91,7 @@ const WelcomeScreen = ({ navigation }) => {
             <Ionicons
               name="settings-outline"
               size={24}
-              color={Colors.primary}
+              color={theme.iconColor}
             />
           </TouchableOpacity>
         </View>
@@ -129,9 +132,11 @@ const WelcomeScreen = ({ navigation }) => {
         <View
           style={[styles.statusCard, { backgroundColor: theme.cardBackground }]}
         >
-          <Feather name="book" size={24} color={Colors.darkLight} />
+          <Feather name="book" size={24} color={theme.iconColor} />
           <View style={styles.statusTextContainer}>
-            <Text style={styles.statusTitle}>Take Quiz</Text>
+            <Text style={[styles.statusTitle, { color: theme.textColor }]}>
+              Take Quiz
+            </Text>
             <Text style={styles.statusAction}>Earn coins now</Text>
           </View>
         </View>
@@ -146,12 +151,20 @@ const WelcomeScreen = ({ navigation }) => {
             <View style={styles.surahLeft}>
               <Text style={styles.surahNumber}>{surah.id}</Text>
               <View style={styles.surahInfo}>
-                <Text style={styles.surahName}>{surah.name}</Text>
-                <Text style={styles.surahTranslation}>{surah.translation}</Text>
+                <Text style={[styles.surahName, { color: theme.textColor }]}>
+                  {surah.name}
+                </Text>
+                <Text
+                  style={[styles.surahTranslation, { color: theme.darkLight }]}
+                >
+                  {surah.translation}
+                </Text>
               </View>
             </View>
             <View style={styles.surahRight}>
-              <Text style={styles.arabicText}>{surah.arabicText}</Text>
+              <Text style={[styles.arabicText, { color: theme.textColor }]}>
+                {surah.arabicText}
+              </Text>
               <Text style={styles.versesCount}>{surah.verses}</Text>
             </View>
           </View>
@@ -163,29 +176,30 @@ const WelcomeScreen = ({ navigation }) => {
         style={[styles.bottomNav, { backgroundColor: theme.listBackground }]}
       >
         <TouchableOpacity style={styles.navItem}>
-          <MaterialIcons name="quiz" size={24} color={Colors.darkLight} />
-          <Text style={styles.navText}>Quiz</Text>
+          <MaterialIcons name="quiz" size={24} color={theme.iconColor} />
+          <Text style={[styles.navText, { color: theme.darkLight }]}>Quiz</Text>
         </TouchableOpacity>
         <TouchableOpacity
           style={styles.navItem}
-          onPress={() => {
-            navigation.navigate("Prayer");
-          }}
+          onPress={handlePrayerNavigation}
         >
-          <MaterialIcons
-            name="access-time"
-            size={24}
-            color={Colors.darkLight}
-          />
-          <Text style={styles.navText}>Prayers</Text>
+          <MaterialIcons name="access-time" size={24} color={theme.iconColor} />
+          <Text style={[styles.navText, { color: theme.darkLight }]}>
+            Prayers
+          </Text>
         </TouchableOpacity>
         <TouchableOpacity style={styles.navItem}>
           <AntDesign name="book" size={24} color={Colors.brand} />
-          <Text style={styles.navText}>Quran</Text>
+          <Text style={[styles.navText, { color: Colors.brand }]}>Quran</Text>
         </TouchableOpacity>
-        <TouchableOpacity style={styles.navItem}>
-          <MaterialIcons name="person" size={24} color={Colors.darkLight} onPress={handleProfileNavigation}/>
-          <Text style={styles.navText}>Profile</Text>
+        <TouchableOpacity
+          style={styles.navItem}
+          onPress={handleProfileNavigation}
+        >
+          <MaterialIcons name="person" size={24} color={theme.iconColor} />
+          <Text style={[styles.navText, { color: theme.darkLight }]}>
+            Profile
+          </Text>
         </TouchableOpacity>
       </View>
     </SafeAreaView>
@@ -253,7 +267,6 @@ const styles = StyleSheet.create({
     marginLeft: 16,
   },
   statusTitle: {
-    color: Colors.primary,
     fontWeight: "500",
   },
   statusAction: {
@@ -291,7 +304,6 @@ const styles = StyleSheet.create({
   surahName: {
     fontSize: 16,
     fontWeight: "500",
-    color: Colors.tertiary,
   },
   surahTranslation: {
     fontSize: 12,
@@ -324,7 +336,6 @@ const styles = StyleSheet.create({
   },
   navText: {
     fontSize: 12,
-    color: Colors.darkLight,
     marginTop: 4,
   },
 });

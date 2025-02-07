@@ -14,6 +14,9 @@ import {
   AntDesign,
 } from "@expo/vector-icons";
 import { useTheme } from "../components/themeContext";
+import { Colors } from "../components/styles";
+
+const { primary, secondary, tertiary, darkLight, brand, green, red } = Colors;
 
 const PrayerTimeScreen = ({ navigation }) => {
   const { theme } = useTheme();
@@ -30,6 +33,14 @@ const PrayerTimeScreen = ({ navigation }) => {
     { name: "Maghrib", time: "6:57 PM", icon: "volume-high" },
     { name: "Isha'a", time: "8:04 PM", icon: "volume-high" },
   ];
+
+  //navigation
+  const handleHomeNavigation = () => {
+    navigation.navigate("Home");
+  };
+  const handleProfileNavigation = () => {
+    navigation.navigate("Profile");
+  };
 
   return (
     <SafeAreaView style={{ flex: 1, backgroundColor: theme.backgroundColor }}>
@@ -126,18 +137,19 @@ const PrayerTimeScreen = ({ navigation }) => {
           style={styles.navItem}
           onPress={() => navigation.navigate("Prayer")}
         >
-          <MaterialIcons name="access-time" size={24} color={theme.iconColor} />
-          <Text style={[styles.navText, { color: theme.textColor }]}>
-            Prayers
-          </Text>
+          <MaterialIcons name="access-time" size={24} color={Colors.brand} />
+          <Text style={[styles.navText, { color: Colors.brand }]}>Prayers</Text>
         </TouchableOpacity>
-        <TouchableOpacity style={styles.navItem}>
+        <TouchableOpacity style={styles.navItem} onPress={handleHomeNavigation}>
           <AntDesign name="book" size={24} color={theme.iconColor} />
           <Text style={[styles.navText, { color: theme.textColor }]}>
             Quran
           </Text>
         </TouchableOpacity>
-        <TouchableOpacity style={styles.navItem}>
+        <TouchableOpacity
+          style={styles.navItem}
+          onPress={handleProfileNavigation}
+        >
           <MaterialIcons name="person" size={24} color={theme.iconColor} />
           <Text style={[styles.navText, { color: theme.textColor }]}>
             Profile
