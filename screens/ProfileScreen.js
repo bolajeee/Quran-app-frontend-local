@@ -145,7 +145,11 @@ const ProfileScreen = ({ navigation }) => {
                 { borderBottomColor: theme.textColor + "20" },
               ]}
             >
-              <AntDesign name={item.icon} size={24} color={theme.iconColor} />
+              <MaterialIcons
+                name={item.icon}
+                size={24}
+                color={theme.iconColor}
+              />
               <View style={styles.menuItemText}>
                 <Text
                   style={[styles.menuItemLabel, { color: theme.textColor }]}
@@ -164,7 +168,7 @@ const ProfileScreen = ({ navigation }) => {
                 )}
               </View>
               <Ionicons
-                name="chevron-right"
+                name="chevron-forward"
                 size={24}
                 color={theme.iconColor}
               />
@@ -213,8 +217,8 @@ const ProfileScreen = ({ navigation }) => {
           style={styles.navItem}
           onPress={handleProfileNavigation}
         >
-          <MaterialIcons name="person" size={24} color={Colors.brand} />
-          <Text style={[styles.navText, { color: Colors.brand }]}>
+          <MaterialIcons name="person" size={24} color={theme.iconColor} />
+          <Text style={[styles.navText, { color: theme.textColor }]}>
             Profile
           </Text>
         </TouchableOpacity>
