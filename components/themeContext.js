@@ -8,7 +8,7 @@ export const ThemeProvider = ({ children }) => {
 
   const theme = {
     backgroundColor: isDarkMode ? "#1a1a1a" : "#004225",
-    textColor: isDarkMode ? "#ffffff" : Colors.primary,
+    textColor: isDarkMode ? Colors.darkLight : Colors.primary,
     cardBackground: isDarkMode ? "#333333" : "rgba(255,255,255,0.1)",
     listBackground: isDarkMode ? "#2a2a2a" : Colors.primary,
     iconColor: isDarkMode ? "#ffffff" : Colors.darkLight,

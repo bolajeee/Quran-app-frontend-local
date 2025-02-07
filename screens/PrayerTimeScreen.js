@@ -11,13 +11,9 @@ import {
   Ionicons,
   MaterialCommunityIcons,
   MaterialIcons,
-  
   AntDesign,
 } from "@expo/vector-icons";
-import { Colors } from "../components/styles";
 import { useTheme } from "../components/themeContext";
-
-const { primary, secondary, tertiary, darkLight, brand, green } = Colors;
 
 const PrayerTimeScreen = ({ navigation }) => {
   const { theme } = useTheme();
@@ -46,28 +42,12 @@ const PrayerTimeScreen = ({ navigation }) => {
         <Text style={[styles.headerTitle, { color: theme.textColor }]}>
           Prayers
         </Text>
-        <View style={styles.headerIcons}>
-          <TouchableOpacity style={styles.iconButton}>
-            <Ionicons
-              name="calendar-outline"
-              size={24}
-              color={theme.textColor}
-            />
-          </TouchableOpacity>
-          <TouchableOpacity style={styles.iconButton}>
-            <Ionicons
-              name="share-social-outline"
-              size={24}
-              color={theme.textColor}
-            />
-          </TouchableOpacity>
-        </View>
       </View>
 
       {/* Location Info */}
       <View style={styles.locationInfo}>
         <Text style={[styles.locationText, { color: theme.textColor }]}>
-          Lagos, Nigeria • Muslim World Leagu...(MWL) (18.0° / 17.0°)
+          Lagos, Nigeria • Muslim World League (MWL) (18.0° / 17.0°)
         </Text>
       </View>
 
@@ -138,19 +118,12 @@ const PrayerTimeScreen = ({ navigation }) => {
 
       {/* Bottom Navigation */}
       <View
-        style={[
-          styles.bottomNav,
-          {
-            backgroundColor: theme.listBackground,
-            borderTopColor: theme.cardBackground,
-          },
-        ]}
+        style={[styles.bottomNav, { backgroundColor: theme.listBackground }]}
       >
         <TouchableOpacity style={styles.navItem}>
           <MaterialIcons name="quiz" size={24} color={theme.iconColor} />
           <Text style={[styles.navText, { color: theme.textColor }]}>Quiz</Text>
         </TouchableOpacity>
-
         <TouchableOpacity
           style={styles.navItem}
           onPress={() => navigation.navigate("Prayer")}
@@ -160,17 +133,12 @@ const PrayerTimeScreen = ({ navigation }) => {
             Prayers
           </Text>
         </TouchableOpacity>
-
-        <TouchableOpacity
-          style={styles.navItem}
-          onPress={() => navigation.navigate("Home")}
-        >
+        <TouchableOpacity style={styles.navItem}>
           <AntDesign name="book" size={24} color={theme.iconColor} />
           <Text style={[styles.navText, { color: theme.textColor }]}>
             Quran
           </Text>
         </TouchableOpacity>
-
         <TouchableOpacity style={styles.navItem}>
           <MaterialIcons name="person" size={24} color={theme.iconColor} />
           <Text style={[styles.navText, { color: theme.textColor }]}>
@@ -185,7 +153,6 @@ const PrayerTimeScreen = ({ navigation }) => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#004225",
   },
   header: {
     flexDirection: "row",
@@ -197,21 +164,12 @@ const styles = StyleSheet.create({
   headerTitle: {
     fontSize: 28,
     fontWeight: "bold",
-    color: "white",
-  },
-  headerIcons: {
-    flexDirection: "row",
-    gap: 15,
-  },
-  iconButton: {
-    padding: 4,
   },
   locationInfo: {
     paddingHorizontal: 16,
     marginTop: 8,
   },
   locationText: {
-    color: "white",
     fontSize: 16,
   },
   dateInfo: {
@@ -226,12 +184,10 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   dateText: {
-    color: "white",
     fontSize: 20,
     fontWeight: "600",
   },
   hijriText: {
-    color: "white",
     fontSize: 16,
     opacity: 0.9,
     marginTop: 4,
@@ -241,7 +197,6 @@ const styles = StyleSheet.create({
     borderTopLeftRadius: 30,
     borderTopRightRadius: 30,
     padding: 20,
-   
   },
   prayerItem: {
     flexDirection: "row",
@@ -249,49 +204,40 @@ const styles = StyleSheet.create({
     alignItems: "center",
     paddingVertical: 16,
     borderBottomWidth: 1,
-    borderBottomColor: "#eee",
   },
   prayerLeft: {
     flexDirection: "row",
     alignItems: "center",
-    gap: 15,
   },
   prayerName: {
     fontSize: 18,
-    
   },
   prayerRight: {
     flexDirection: "row",
     alignItems: "center",
-    gap: 10,
   },
   countdownText: {
-    color: "#666",
     fontSize: 16,
   },
   prayerTime: {
     fontSize: 16,
-    color: "#333",
     fontWeight: "500",
   },
   checkmark: {
-    backgroundColor: green,
+    backgroundColor: "#10B981",
     borderRadius: 12,
   },
   bottomNav: {
     flexDirection: "row",
     justifyContent: "space-around",
     padding: 16,
-    backgroundColor: Colors.primary,
     borderTopWidth: 1,
-    borderTopColor: Colors.secondary,
   },
   navItem: {
     alignItems: "center",
   },
   navText: {
     fontSize: 12,
-    color: Colors.darkLight,
     marginTop: 4,
   },
 });

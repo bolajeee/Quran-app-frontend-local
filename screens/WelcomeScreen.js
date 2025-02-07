@@ -30,6 +30,9 @@ const WelcomeScreen = ({ navigation }) => {
     setActiveTab(mode);
     setIsDarkMode(mode === "Dark");
   };
+   const handleProfileNavigation = () => {
+     navigation.navigate("Profile");
+   };
 
   const surahs = [
     {
@@ -181,7 +184,7 @@ const WelcomeScreen = ({ navigation }) => {
           <Text style={styles.navText}>Quran</Text>
         </TouchableOpacity>
         <TouchableOpacity style={styles.navItem}>
-          <MaterialIcons name="person" size={24} color={Colors.darkLight} />
+          <MaterialIcons name="person" size={24} color={Colors.darkLight} onPress={handleProfileNavigation}/>
           <Text style={styles.navText}>Profile</Text>
         </TouchableOpacity>
       </View>

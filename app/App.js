@@ -8,6 +8,8 @@ import SignUpScreen from "../screens/SignupScreen";
 import WelcomeScreen from "../screens/WelcomeScreen";
 import PrayerTimeScreen from "../screens/PrayerTimeScreen";
 import { ThemeProvider } from "../components/themeContext";
+import ProfileScreen from "../screens/ProfileScreen";
+import SurahDetailScreen from "../screens/SurahDetailScreen";
 
 const Stack = createStackNavigator();
 
@@ -21,6 +23,8 @@ const App = () => {
             <Stack.Screen name="Signup" component={SignUpScreen} />
             <Stack.Screen name="Home" component={WelcomeScreen} />
             <Stack.Screen name="Prayer" component={PrayerTimeScreen} />
+            <Stack.Screen name="Profile" component={ProfileScreen} />
+            <Stack.Screen name="Surah" component={SurahDetailScreen} />
           </Stack.Navigator>
         </NavigationContainer>
       </NavigationIndependentTree>
