@@ -36,6 +36,9 @@ const WelcomeScreen = ({ navigation }) => {
   const handlePrayerNavigation = () => {
     navigation.navigate("Prayer");
   };
+  const handleSurahDetailNavigation = (surah) => {
+    navigation.navigate("SurahDetail", { surah });
+  };
 
   const surahs = [
     {
@@ -147,7 +150,11 @@ const WelcomeScreen = ({ navigation }) => {
         style={[styles.surahList, { backgroundColor: theme.listBackground }]}
       >
         {surahs.map((surah) => (
-          <View key={surah.id} style={styles.surahItem}>
+          <TouchableOpacity
+            key={surah.id}
+            style={styles.surahItem}
+            onPress={() => handleSurahDetailNavigation(surah)}
+          >
             <View style={styles.surahLeft}>
               <Text style={styles.surahNumber}>{surah.id}</Text>
               <View style={styles.surahInfo}>
@@ -167,7 +174,7 @@ const WelcomeScreen = ({ navigation }) => {
               </Text>
               <Text style={styles.versesCount}>{surah.verses}</Text>
             </View>
-          </View>
+          </TouchableOpacity>
         ))}
       </ScrollView>
 

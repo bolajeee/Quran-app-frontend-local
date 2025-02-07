@@ -24,7 +24,7 @@ const App = () => {
             <Stack.Screen name="Home" component={WelcomeScreen} />
             <Stack.Screen name="Prayer" component={PrayerTimeScreen} />
             <Stack.Screen name="Profile" component={ProfileScreen} />
-            <Stack.Screen name="Surah" component={SurahDetailScreen} />
+            <Stack.Screen name="SurahDetail" component={SurahDetailScreen} />
           </Stack.Navigator>
         </NavigationContainer>
       </NavigationIndependentTree>

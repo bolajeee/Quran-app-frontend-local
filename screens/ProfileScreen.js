@@ -18,10 +18,10 @@ const ProfileScreen = ({ navigation }) => {
   const { theme } = useTheme();
 
   const menuItems = [
-    { icon: "account-plus", label: "My Premium", subtitle: "Go Premium" },
-    { icon: "star-crescent", label: "Daily Deen" },
+    { icon: "star", label: "My Premium", subtitle: "Go Premium" },
+    { icon: "star", label: "Daily Deen" },
     { icon: "star", label: "Leave us a Review" },
-    { icon: "share-variant", label: "Share Muslim Pro App" },
+    { icon: "sharealt", label: "Share Muslim Pro App" },
     {
       icon: "update",
       label: "Your App is up to date",
@@ -29,7 +29,7 @@ const ProfileScreen = ({ navigation }) => {
     },
   ];
 
-  //navigation
+  // Navigation handlers
   const handleLoginNavigation = () => {
     navigation.navigate("Login");
   };
@@ -188,13 +188,7 @@ const ProfileScreen = ({ navigation }) => {
       </ScrollView>
 
       <View
-        style={[
-          styles.bottomNav,
-          {
-            backgroundColor: theme.listBackground,
-            borderTopColor: theme.bottomNavBorderColor,
-          },
-        ]}
+        style={[styles.bottomNav, { backgroundColor: theme.listBackground }]}
       >
         <TouchableOpacity style={styles.navItem}>
           <MaterialIcons name="quiz" size={24} color={theme.iconColor} />
@@ -219,8 +213,10 @@ const ProfileScreen = ({ navigation }) => {
           style={styles.navItem}
           onPress={handleProfileNavigation}
         >
-          <MaterialIcons name="person" size={24} color={Colors.brand} />
-          <Text style={[styles.navText, { color: Colors.brand }]}>Profile</Text>
+          <MaterialIcons name="person" size={24} color={theme.iconColor} />
+          <Text style={[styles.navText, { color: theme.textColor }]}>
+            Profile
+          </Text>
         </TouchableOpacity>
       </View>
     </SafeAreaView>

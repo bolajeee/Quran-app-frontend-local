@@ -16,7 +16,7 @@ const SurahDetailScreen = ({ route }) => {
   return (
     <SafeAreaView style={{ flex: 1, backgroundColor: theme.backgroundColor }}>
       <StatusBar barStyle="light-content" />
-      <View style={styles.header}>
+      <View style={styles.header} color={theme.cardBackground}>
         <Text style={[styles.title, { color: theme.textColor }]}>
           {surah.name}
         </Text>
@@ -35,7 +35,6 @@ const styles = StyleSheet.create({
   header: {
     padding: 16,
     alignItems: "center",
-    backgroundColor: "#004225",
   },
   title: {
     fontSize: 24,
@@ -46,7 +45,7 @@ const styles = StyleSheet.create({
   },
   content: {
     fontSize: 16,
-    lineHeight: 24
+    lineHeight: 24,
   },
 });
 
