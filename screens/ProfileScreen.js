@@ -213,8 +213,8 @@ const ProfileScreen = ({ navigation }) => {
           style={styles.navItem}
           onPress={handleProfileNavigation}
         >
-          <MaterialIcons name="person" size={24} color={theme.iconColor} />
-          <Text style={[styles.navText, { color: theme.textColor }]}>
+          <MaterialIcons name="person" size={24} color={Colors.brand} />
+          <Text style={[styles.navText, { color: Colors.brand }]}>
             Profile
           </Text>
         </TouchableOpacity>
