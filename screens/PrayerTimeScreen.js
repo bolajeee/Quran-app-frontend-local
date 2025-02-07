@@ -32,9 +32,7 @@ const PrayerTimeScreen = ({ navigation }) => {
   ];
 
   return (
-    <SafeAreaView
-      style={[styles.container, { backgroundColor: theme.backgroundColor }]}
-    >
+    <SafeAreaView style={{ flex: 1, backgroundColor: theme.backgroundColor }}>
       <StatusBar barStyle="light-content" />
 
       {/* Header */}
@@ -155,11 +153,10 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   header: {
+    padding: 16,
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
-    padding: 16,
-    paddingTop: 20,
   },
   headerTitle: {
     fontSize: 28,

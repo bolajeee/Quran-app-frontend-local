@@ -10,8 +10,6 @@ import {
 } from "react-native";
 import { StatusBar } from "expo-status-bar";
 
-
-
 //icons
 import { Ionicons, Octicons, Fontisto } from "@expo/vector-icons";
 
@@ -42,10 +40,8 @@ import {
 
 const { primary, secondary, tertiary, darkLight, brand, green, red } = Colors;
 
-const LoginScreen = ({navigation}) => {
+const LoginScreen = ({ navigation }) => {
   const [hidePassword, setHidePassword] = useState(true);
-
-  
 
   return (
     <KeyboardAvoidingView
