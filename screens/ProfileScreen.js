@@ -263,6 +263,7 @@ const styles = StyleSheet.create({
     textAlign: "center",
     marginBottom: 16,
     fontSize: 16,
+    padding: 8
   },
   createAccountButton: {
     margin: 16,
