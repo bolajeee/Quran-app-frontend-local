@@ -14,8 +14,18 @@ import { Colors } from "../components/styles";
 
 const { primary, secondary, tertiary, darkLight, brand, green, red } = Colors;
 
-const ProfileScreen = ({ navigation }) => {
+const ProfileScreen = ({ route, navigation }) => {
   const { theme } = useTheme();
+  const [totalScore, setTotalScore] = React.useState(0);
+
+  // Get the quiz results from navigation params and update total score
+  const newScore = route.params?.quizScore || 0;
+
+  React.useEffect(() => {
+    if (newScore > 0) {
+      setTotalScore((prevScore) => prevScore + newScore);
+    }
+  }, [newScore]);
 
   const menuItems = [
     { icon: "star", label: "My Premium", subtitle: "Go Premium" },
@@ -44,6 +54,9 @@ const ProfileScreen = ({ navigation }) => {
   };
   const handleProfileNavigation = () => {
     navigation.navigate("Profile");
+  };
+  const handleQuizNavigation = () => {
+    navigation.navigate("Quiz");
   };
 
   return (
@@ -103,10 +116,10 @@ const ProfileScreen = ({ navigation }) => {
             <View style={styles.questItem}>
               <AntDesign name="star" size={24} color={Colors.brand} />
               <Text style={[styles.questValue, { color: theme.textColor }]}>
-                0
+                {totalScore}
               </Text>
               <Text style={[styles.questLabel, { color: theme.textColor }]}>
-                Stars
+                Total Score
               </Text>
             </View>
             <TouchableOpacity
@@ -194,7 +207,7 @@ const ProfileScreen = ({ navigation }) => {
       <View
         style={[styles.bottomNav, { backgroundColor: theme.listBackground }]}
       >
-        <TouchableOpacity style={styles.navItem}>
+        <TouchableOpacity style={styles.navItem} onPress={handleQuizNavigation}>
           <MaterialIcons name="quiz" size={24} color={theme.iconColor} />
           <Text style={[styles.navText, { color: theme.textColor }]}>Quiz</Text>
         </TouchableOpacity>
@@ -217,8 +230,8 @@ const ProfileScreen = ({ navigation }) => {
           style={styles.navItem}
           onPress={handleProfileNavigation}
         >
-          <MaterialIcons name="person" size={24} color={theme.iconColor} />
-          <Text style={[styles.navText, { color: theme.textColor }]}>
+          <MaterialIcons name="person" size={24} color={Colors.brand} />
+          <Text style={[styles.navText, { color: Colors.brand }]}>
             Profile
           </Text>
         </TouchableOpacity>
@@ -263,7 +276,7 @@ const styles = StyleSheet.create({
     textAlign: "center",
     marginBottom: 16,
     fontSize: 16,
-    paddingHorizontal: 8
+    paddingHorizontal: 8,
   },
   createAccountButton: {
     margin: 16,

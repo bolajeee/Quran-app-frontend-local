@@ -41,6 +41,12 @@ const PrayerTimeScreen = ({ navigation }) => {
   const handleProfileNavigation = () => {
     navigation.navigate("Profile");
   };
+  const handleCalenderNavigation = () => {
+    navigation.navigate("Calender");
+  };
+  const handleQuizNavigation = () => {
+    navigation.navigate("Quiz");
+  };
 
   return (
     <SafeAreaView style={{ flex: 1, backgroundColor: theme.backgroundColor }}>
@@ -65,14 +71,17 @@ const PrayerTimeScreen = ({ navigation }) => {
         <TouchableOpacity>
           <Ionicons name="chevron-back" size={24} color={theme.textColor} />
         </TouchableOpacity>
-        <View style={styles.dateTextContainer}>
+        <TouchableOpacity
+          style={styles.dateTextContainer}
+          onPress={handleCalenderNavigation}
+        >
           <Text style={[styles.dateText, { color: theme.textColor }]}>
             Today, February 5
           </Text>
           <Text style={[styles.hijriText, { color: theme.textColor }]}>
             Sha'ban 6, 1446 AH
           </Text>
-        </View>
+        </TouchableOpacity>
         <TouchableOpacity>
           <Ionicons name="chevron-forward" size={24} color={theme.textColor} />
         </TouchableOpacity>
@@ -129,7 +138,7 @@ const PrayerTimeScreen = ({ navigation }) => {
       <View
         style={[styles.bottomNav, { backgroundColor: theme.listBackground }]}
       >
-        <TouchableOpacity style={styles.navItem}>
+        <TouchableOpacity style={styles.navItem} onPress={handleQuizNavigation}>
           <MaterialIcons name="quiz" size={24} color={theme.iconColor} />
           <Text style={[styles.navText, { color: theme.textColor }]}>Quiz</Text>
         </TouchableOpacity>

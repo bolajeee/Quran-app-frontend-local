@@ -39,6 +39,10 @@ const WelcomeScreen = ({ navigation }) => {
   const handleSurahDetailNavigation = (surah) => {
     navigation.navigate("SurahDetail", { surah });
   };
+    const handleQuizNavigation = () => {
+      navigation.navigate("Quiz");
+    };
+
 
   const surahs = [
     {
@@ -131,7 +135,7 @@ const WelcomeScreen = ({ navigation }) => {
       </View>
 
       {/* Status Cards */}
-      <View style={styles.statusCards}>
+      <TouchableOpacity style={styles.statusCards} onPress={handleQuizNavigation}>
         <View
           style={[styles.statusCard, { backgroundColor: theme.cardBackground }]}
         >
@@ -143,7 +147,7 @@ const WelcomeScreen = ({ navigation }) => {
             <Text style={styles.statusAction}>Earn coins now</Text>
           </View>
         </View>
-      </View>
+      </TouchableOpacity>
 
       {/* Surah List */}
       <ScrollView
@@ -182,7 +186,7 @@ const WelcomeScreen = ({ navigation }) => {
       <View
         style={[styles.bottomNav, { backgroundColor: theme.listBackground }]}
       >
-        <TouchableOpacity style={styles.navItem}>
+        <TouchableOpacity style={styles.navItem} onPress={handleQuizNavigation}>
           <MaterialIcons name="quiz" size={24} color={theme.iconColor} />
           <Text style={[styles.navText, { color: theme.darkLight }]}>Quiz</Text>
         </TouchableOpacity>

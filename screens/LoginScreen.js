@@ -9,6 +9,7 @@ import {
   ScrollView,
 } from "react-native";
 import { StatusBar } from "expo-status-bar";
+import { useNavigation } from "@react-navigation/native";
 
 
 
@@ -42,8 +43,13 @@ import {
 
 const { primary, secondary, tertiary, darkLight, brand, green, red } = Colors;
 
+
 const LoginScreen = ({navigation}) => {
   const [hidePassword, setHidePassword] = useState(true);
+
+  const handleHomeNavigation = () => {
+    navigation.navigate("Home");
+  };
 
   return (
     <KeyboardAvoidingView
@@ -98,7 +104,10 @@ const LoginScreen = ({navigation}) => {
 
                   <MsgBox>...</MsgBox>
                   <StyledButton
-                    onPress={handleSubmit}
+                    onPress={() => {
+                      handleHomeNavigation()
+                      handleSubmit
+                    }}
                     style={styles.loginButton}
                   >
                     <StyledButtonText>Login</StyledButtonText>
@@ -106,7 +115,10 @@ const LoginScreen = ({navigation}) => {
                   <Line style={styles.line} />
                   <StyledButton
                     google={true}
-                    onPress={handleSubmit}
+                    onPress={() => {
+                      handleSubmit
+                      
+                    }}
                     style={styles.googleButton}
                   >
                     <Fontisto name="google" size={20} color={Colors.primary} />
