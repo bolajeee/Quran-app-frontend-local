@@ -39,10 +39,12 @@ const WelcomeScreen = ({ navigation }) => {
   const handleSurahDetailNavigation = (surah) => {
     navigation.navigate("SurahDetail", { surah });
   };
-    const handleQuizNavigation = () => {
-      navigation.navigate("Quiz");
-    };
-
+  const handleQuizNavigation = () => {
+    navigation.navigate("Quiz");
+  };
+  const handleSettingNavigation = () => {
+    navigation.navigate("Setting");
+  };
 
   const surahs = [
     {
@@ -94,7 +96,10 @@ const WelcomeScreen = ({ navigation }) => {
           Quran Masters
         </Text>
         <View style={styles.headerIcons}>
-          <TouchableOpacity style={styles.settingsIcon}>
+          <TouchableOpacity
+            style={styles.settingsIcon}
+            onPress={handleSettingNavigation}
+          >
             <Ionicons
               name="settings-outline"
               size={24}
@@ -135,7 +140,10 @@ const WelcomeScreen = ({ navigation }) => {
       </View>
 
       {/* Status Cards */}
-      <TouchableOpacity style={styles.statusCards} onPress={handleQuizNavigation}>
+      <TouchableOpacity
+        style={styles.statusCards}
+        onPress={handleQuizNavigation}
+      >
         <View
           style={[styles.statusCard, { backgroundColor: theme.cardBackground }]}
         >

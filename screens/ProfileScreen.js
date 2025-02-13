@@ -58,6 +58,9 @@ const ProfileScreen = ({ route, navigation }) => {
   const handleQuizNavigation = () => {
     navigation.navigate("Quiz");
   };
+   const handleSettingNavigation = () => {
+     navigation.navigate("Setting");
+   };
 
   return (
     <SafeAreaView style={{ flex: 1, backgroundColor: theme.backgroundColor }}>
@@ -67,7 +70,9 @@ const ProfileScreen = ({ route, navigation }) => {
           <Text style={[styles.headerTitle, { color: theme.textColor }]}>
             Profile
           </Text>
-          <TouchableOpacity style={styles.settingsIcon}>
+          <TouchableOpacity style={styles.settingsIcon}
+            onPress={handleSettingNavigation}
+          >
             <Ionicons
               name="settings-outline"
               size={24}

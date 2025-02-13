@@ -12,6 +12,7 @@ import ProfileScreen from "../screens/ProfileScreen";
 import SurahDetailScreen from "../screens/SurahDetailScreen";
 import CalendarScreen from "../screens/CalendarScreen";
 import QuizScreen from "../screens/QuizScreen";
+import Settings from "../screens/Settings";
 
 const Stack = createStackNavigator();
 
@@ -29,6 +30,7 @@ const App = () => {
             <Stack.Screen name="SurahDetail" component={SurahDetailScreen} />
             <Stack.Screen name="Calender" component={CalendarScreen} />
             <Stack.Screen name="Quiz" component={QuizScreen} />
+            <Stack.Screen name="Setting" component={Settings} />
           </Stack.Navigator>
         </NavigationContainer>
       </NavigationIndependentTree>
