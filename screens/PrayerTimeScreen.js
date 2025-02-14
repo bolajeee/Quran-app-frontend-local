@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import {
   StyleSheet,
   View,
@@ -6,6 +6,7 @@ import {
   TouchableOpacity,
   SafeAreaView,
   StatusBar,
+  ActivityIndicator,
 } from "react-native";
 import {
   Ionicons,
@@ -15,24 +16,95 @@ import {
 } from "@expo/vector-icons";
 import { useTheme } from "../components/themeContext";
 import { Colors } from "../components/styles";
+import LocationComponent from "../components/locationComponent";
 
 const { primary, secondary, tertiary, darkLight, brand, green, red } = Colors;
 
 const PrayerTimeScreen = ({ navigation }) => {
   const { theme } = useTheme();
-  const prayers = [
-    { name: "Fajr", time: "5:53 AM", icon: "volume-high" },
-    { name: "Sunrise", time: "7:04 AM", icon: "weather-sunset-up" },
-    {
-      name: "Dhuhr",
-      time: "1:00 PM",
-      icon: "volume-high",
-      countdown: "-1:40:20",
-    },
-    { name: "Asr", time: "4:22 PM", icon: "volume-high" },
-    { name: "Maghrib", time: "6:57 PM", icon: "volume-high" },
-    { name: "Isha'a", time: "8:04 PM", icon: "volume-high" },
-  ];
+  const [prayerTimes, setPrayerTimes] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+  const [hijriDate, setHijriDate] = useState("");
+  const currentDate = new Date();
+
+  // Function to handle location updates from LocationComponent
+  const handleLocationUpdate = async (latitude, longitude) => {
+    try {
+      const response = await fetch(
+        `http://api.aladhan.com/v1/timings/${currentDate.getDate()}-${
+          currentDate.getMonth() + 1
+        }-${currentDate.getFullYear()}?latitude=${latitude}&longitude=${longitude}&method=2`
+      );
+      const data = await response.json();
+
+      if (data.code === 200) {
+        setPrayerTimes(data.data.timings);
+        setHijriDate(data.data.date.hijri.date);
+        setLoading(false);
+      } else {
+        setError("Failed to fetch prayer times");
+        setLoading(false);
+      }
+    } catch (err) {
+      setError("Error fetching prayer times");
+      setLoading(false);
+    }
+  };
+
+  const formatTime = (time) => {
+    if (!time) return "";
+    const [hours, minutes] = time.split(":");
+    const period = hours >= 12 ? "PM" : "AM";
+    const formattedHours = hours % 12 || 12;
+    return `${formattedHours}:${minutes} ${period}`;
+  };
+
+  // Modified LocationComponent to pass location data
+  const LocationWrapper = () => {
+    const onLocationReceived = (location) => {
+      if (location && location.coords) {
+        handleLocationUpdate(
+          location.coords.latitude,
+          location.coords.longitude
+        );
+      }
+    };
+
+    return <LocationComponent onLocationUpdate={onLocationReceived} />;
+  };
+
+
+  const prayers = prayerTimes
+    ? [
+        {
+          name: "Fajr",
+          time: formatTime(prayerTimes.Fajr),
+          icon: "volume-high",
+        },
+        {
+          name: "Sunrise",
+          time: formatTime(prayerTimes.Sunrise),
+          icon: "weather-sunset-up",
+        },
+        {
+          name: "Dhuhr",
+          time: formatTime(prayerTimes.Dhuhr),
+          icon: "volume-high",
+        },
+        { name: "Asr", time: formatTime(prayerTimes.Asr), icon: "volume-high" },
+        {
+          name: "Maghrib",
+          time: formatTime(prayerTimes.Maghrib),
+          icon: "volume-high",
+        },
+        {
+          name: "Isha'a",
+          time: formatTime(prayerTimes.Isha),
+          icon: "volume-high",
+        },
+      ]
+    : [];
 
   //navigation
   const handleHomeNavigation = () => {
@@ -61,9 +133,7 @@ const PrayerTimeScreen = ({ navigation }) => {
 
       {/* Location Info */}
       <View style={styles.locationInfo}>
-        <Text style={[styles.locationText, { color: theme.textColor }]}>
-          Lagos, Nigeria • Muslim World League (MWL) (18.0° / 17.0°)
-        </Text>
+        <LocationWrapper />
       </View>
 
       {/* Date Info */}
@@ -76,10 +146,10 @@ const PrayerTimeScreen = ({ navigation }) => {
           onPress={handleCalenderNavigation}
         >
           <Text style={[styles.dateText, { color: theme.textColor }]}>
-            Today, February 5
+            Gregorian Calendar, {currentDate.toLocaleDateString()}
           </Text>
           <Text style={[styles.hijriText, { color: theme.textColor }]}>
-            Sha'ban 6, 1446 AH
+            Hijra Calendar, {hijriDate}
           </Text>
         </TouchableOpacity>
         <TouchableOpacity>
@@ -91,47 +161,39 @@ const PrayerTimeScreen = ({ navigation }) => {
       <View
         style={[styles.prayerList, { backgroundColor: theme.listBackground }]}
       >
-        {prayers.map((prayer, index) => (
-          <View
-            key={index}
-            style={[
-              styles.prayerItem,
-              { borderBottomColor: theme.cardBackground },
-            ]}
-          >
-            <View style={styles.prayerLeft}>
-              <MaterialCommunityIcons
-                name={prayer.icon}
-                size={24}
-                color={theme.textColor}
-              />
-              <Text style={[styles.prayerName, { color: theme.textColor }]}>
-                {prayer.name}
-              </Text>
-            </View>
-            <View style={styles.prayerRight}>
-              {prayer.countdown && (
-                <Text
-                  style={[styles.countdownText, { color: theme.textColor }]}
-                >
-                  {prayer.countdown}
+        {loading ? (
+          <ActivityIndicator size="large" color={theme.textColor} />
+        ) : error ? (
+          <Text style={[styles.errorText, { color: theme.textColor }]}>
+            {error}
+          </Text>
+        ) : (
+          prayers.map((prayer, index) => (
+            <View
+              key={index}
+              style={[
+                styles.prayerItem,
+                { borderBottomColor: theme.cardBackground },
+              ]}
+            >
+              <View style={styles.prayerLeft}>
+                <MaterialCommunityIcons
+                  name={prayer.icon}
+                  size={24}
+                  color={theme.textColor}
+                />
+                <Text style={[styles.prayerName, { color: theme.textColor }]}>
+                  {prayer.name}
                 </Text>
-              )}
-              <Text style={[styles.prayerTime, { color: theme.textColor }]}>
-                {prayer.time}
-              </Text>
-              {prayer.name === "Dhuhr" && (
-                <View style={styles.checkmark}>
-                  <Ionicons
-                    name="checkmark-circle"
-                    size={20}
-                    color={theme.textColor}
-                  />
-                </View>
-              )}
+              </View>
+              <View style={styles.prayerRight}>
+                <Text style={[styles.prayerTime, { color: theme.textColor }]}>
+                  {prayer.time}
+                </Text>
+              </View>
             </View>
-          </View>
-        ))}
+          ))
+        )}
       </View>
 
       {/* Bottom Navigation */}
@@ -186,6 +248,8 @@ const styles = StyleSheet.create({
   locationInfo: {
     paddingHorizontal: 16,
     marginTop: 8,
+    flexDirection: "row",
+    alignItems: "center",
   },
   locationText: {
     fontSize: 16,
@@ -234,16 +298,9 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
   },
-  countdownText: {
-    fontSize: 16,
-  },
   prayerTime: {
     fontSize: 16,
     fontWeight: "500",
-  },
-  checkmark: {
-    backgroundColor: "#10B981",
-    borderRadius: 12,
   },
   bottomNav: {
     flexDirection: "row",
@@ -257,6 +314,11 @@ const styles = StyleSheet.create({
   navText: {
     fontSize: 12,
     marginTop: 4,
+  },
+  errorText: {
+    textAlign: "center",
+    fontSize: 16,
+    padding: 20,
   },
 });
 

@@ -134,8 +134,8 @@ const Settings = ({ navigation }) => {
             <View style={styles.optionContent}>
               <Ionicons name="business-outline" size={24} color={theme.textColor} />
               <Text style={[styles.optionText, { color: theme.textColor }]}>
-                Corporate Governance
-              </Text>
+              Corporate Governance
+            </Text>
             </View>
             <Ionicons name="chevron-forward" size={24} color={theme.textColor} />
           </TouchableOpacity> */}
