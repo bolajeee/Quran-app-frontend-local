@@ -74,7 +74,6 @@ const PrayerTimeScreen = ({ navigation }) => {
     return <LocationComponent onLocationUpdate={onLocationReceived} />;
   };
 
-
   const prayers = prayerTimes
     ? [
         {

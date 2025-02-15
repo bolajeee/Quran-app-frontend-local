@@ -10,7 +10,15 @@
     "ios": {
       "supportsTablet": true,
       "infoPlist": {
-        "NSLocationWhenInUseUsageDescription": "This app needs access to location when open."
+        "NSLocationWhenInUseUsageDescription": "This app needs access to location when open.",
+        "UIBackgroundModes": [
+          "audio",
+          "fetch",
+          "remote-notification"
+        ],
+        "NSCalendarsUsageDescription": "This app needs access to calendar to schedule prayer times.",
+        "NSNotificationsUsageDescription": "This app needs to send you notifications for prayer times.",
+        "NSMicrophoneUsageDescription": "This app needs access to microphone for adhan playback."
       }
     },
     "android": {
@@ -18,8 +26,13 @@
         "backgroundColor": "#ffffff"
       },
       "permissions": [
-        "ACCESS_FINE_LOCATION"
-      ]
+        "ACCESS_FINE_LOCATION",
+        "VIBRATE",
+        "RECEIVE_BOOT_COMPLETED",
+        "SCHEDULE_EXACT_ALARM",
+        "POST_NOTIFICATIONS"
+      ],
+      "package": "quranApp.com"
     },
     "web": {
       "bundler": "metro",
