@@ -31,7 +31,7 @@ const ProfileScreen = ({ route, navigation }) => {
     { icon: "star", label: "My Premium", subtitle: "Go Premium" },
     { icon: "star", label: "Daily Deen" },
     { icon: "star", label: "Leave us a Review" },
-    { icon: "sharealt", label: "Share Muslim Pro App" },
+    { icon: "share", label: "Share Muslim Pro App" },
     {
       icon: "update",
       label: "Your App is up to date",
@@ -58,9 +58,9 @@ const ProfileScreen = ({ route, navigation }) => {
   const handleQuizNavigation = () => {
     navigation.navigate("Quiz");
   };
-   const handleSettingNavigation = () => {
-     navigation.navigate("Setting");
-   };
+  const handleSettingNavigation = () => {
+    navigation.navigate("Setting");
+  };
 
   return (
     <SafeAreaView style={{ flex: 1, backgroundColor: theme.backgroundColor }}>
@@ -70,7 +70,8 @@ const ProfileScreen = ({ route, navigation }) => {
           <Text style={[styles.headerTitle, { color: theme.textColor }]}>
             Profile
           </Text>
-          <TouchableOpacity style={styles.settingsIcon}
+          <TouchableOpacity
+            style={styles.settingsIcon}
             onPress={handleSettingNavigation}
           >
             <Ionicons
@@ -236,9 +237,7 @@ const ProfileScreen = ({ route, navigation }) => {
           onPress={handleProfileNavigation}
         >
           <MaterialIcons name="person" size={24} color={Colors.brand} />
-          <Text style={[styles.navText, { color: Colors.brand }]}>
-            Profile
-          </Text>
+          <Text style={[styles.navText, { color: Colors.brand }]}>Profile</Text>
         </TouchableOpacity>
       </View>
     </SafeAreaView>
