@@ -17,6 +17,7 @@ import {
 import { useTheme } from "../components/themeContext";
 import { Colors } from "../components/styles";
 import LocationComponent from "../components/locationComponent";
+// import AdhanNotification from "../components/adhanNotification";
 
 const { primary, secondary, tertiary, darkLight, brand, green, red } = Colors;
 
@@ -25,6 +26,7 @@ const PrayerTimeScreen = ({ navigation }) => {
   const [prayerTimes, setPrayerTimes] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [currentPrayer, setCurrentPrayer] = useState(null);
   const [hijriDate, setHijriDate] = useState("");
   const currentDate = new Date();
 
@@ -51,6 +53,38 @@ const PrayerTimeScreen = ({ navigation }) => {
       setLoading(false);
     }
   };
+
+  // Function to determine the current prayer time
+  const getCurrentPrayer = () => {
+    if (!prayerTimes) return null;
+
+    const now = new Date();
+    const currentTime = now.toTimeString().split(" ")[0]; // Get current time in HH:MM:SS format
+
+    const prayerTimesArray = Object.entries(prayerTimes).map(
+      ([name, time]) => ({
+        name,
+        time,
+      })
+    );
+
+    for (let i = 0; i < prayerTimesArray.length; i++) {
+      const nextPrayer = prayerTimesArray[i];
+      const nextPrayerTime = nextPrayer.time;
+
+      if (currentTime < nextPrayerTime) {
+        return prayerTimesArray[i - 1] || prayerTimesArray[0]; // Return the last prayer if current time is before the first prayer
+      }
+    }
+
+    // If no next prayer found, return the last prayer of the day
+    return prayerTimesArray[prayerTimesArray.length - 1];
+  };
+
+  useEffect(() => {
+    const currentPrayer = getCurrentPrayer();
+    setCurrentPrayer(currentPrayer);
+  }, [prayerTimes]);
 
   const formatTime = (time) => {
     if (!time) return "";
@@ -156,6 +190,16 @@ const PrayerTimeScreen = ({ navigation }) => {
         </TouchableOpacity>
       </View>
 
+      {/* Current Prayer Indicator */}
+      {currentPrayer && (
+        <View style={styles.currentPrayerContainer}>
+          <Text style={[styles.currentPrayerText, { color: theme.textColor }]}>
+            Current Prayer: {currentPrayer.name}
+          </Text>
+          <View style={styles.prayerIndicator} />
+        </View>
+      )}
+
       {/* Prayer Times List */}
       <View
         style={[styles.prayerList, { backgroundColor: theme.listBackground }]}
@@ -189,6 +233,9 @@ const PrayerTimeScreen = ({ navigation }) => {
                 <Text style={[styles.prayerTime, { color: theme.textColor }]}>
                   {prayer.time}
                 </Text>
+                {currentPrayer && currentPrayer.name === prayer.name && (
+                  <View style={styles.activeIndicator} />
+                )}
               </View>
             </View>
           ))
@@ -318,6 +365,28 @@ const styles = StyleSheet.create({
     textAlign: "center",
     fontSize: 16,
     padding: 20,
+  },
+  currentPrayerContainer: {
+    alignItems: "center",
+    marginVertical: 20,
+  },
+  currentPrayerText: {
+    fontSize: 20,
+    fontWeight: "600",
+    marginBottom: 10,
+  },
+  prayerIndicator: {
+    width: 10,
+    height: 10,
+    borderRadius: 5,
+    backgroundColor: Colors.brand,
+  },
+  activeIndicator: {
+    width: 10,
+    height: 10,
+    borderRadius: 5,
+    backgroundColor: "red", // Change color to indicate active prayer
+    marginLeft: 8,
   },
 });
 
