@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import {
   StyleSheet,
   View,
@@ -31,28 +31,31 @@ const PrayerTimeScreen = ({ navigation }) => {
   const currentDate = new Date();
 
   // Function to handle location updates from LocationComponent
-  const handleLocationUpdate = async (latitude, longitude) => {
+  const handleLocationUpdate = useCallback(async (latitude, longitude) => {
     try {
       const response = await fetch(
-        `http://api.aladhan.com/v1/timings/${currentDate.getDate()}-${
-          currentDate.getMonth() + 1
+        `https://api.aladhan.com/v1/timings/${currentDate.getDate()}-${currentDate.getMonth() + 1
         }-${currentDate.getFullYear()}?latitude=${latitude}&longitude=${longitude}&method=2`
       );
       const data = await response.json();
 
-      if (data.code === 200) {
-        setPrayerTimes(data.data.timings);
-        setHijriDate(data.data.date.hijri.date);
-        setLoading(false);
-      } else {
-        setError("Failed to fetch prayer times");
+        if (data.code === 200) {
+          setPrayerTimes(data.data.timings);
+          setHijriDate(data.data.date.hijri.date);
+          setLoading(false);
+        } else {
+          setError("Failed to fetch prayer times");
+          setLoading(false);
+        }
+      } catch (err) {
+        console.error(err);
+        setError("Error fetching prayer times");
         setLoading(false);
       }
-    } catch (err) {
-      setError("Error fetching prayer times");
-      setLoading(false);
-    }
-  };
+    },
+    [currentDate]
+  );
+
 
   // Function to determine the current prayer time
   const getCurrentPrayer = () => {
@@ -94,10 +97,12 @@ const PrayerTimeScreen = ({ navigation }) => {
     return `${formattedHours}:${minutes} ${period}`;
   };
 
-  // Modified LocationComponent to pass location data
   const LocationWrapper = () => {
+    const [hasLoaded, setHasLoaded] = useState(false);
+
     const onLocationReceived = (location) => {
-      if (location && location.coords) {
+      if (location?.coords && !hasLoaded) {
+        setHasLoaded(true);
         handleLocationUpdate(
           location.coords.latitude,
           location.coords.longitude
@@ -106,10 +111,8 @@ const PrayerTimeScreen = ({ navigation }) => {
     };
 
     return <LocationComponent onLocationUpdate={onLocationReceived} />;
-  };
 
-  const prayers = prayerTimes
-    ? [
+  };const prayers = prayerTimes    ? [
         {
           name: "Fajr",
           time: formatTime(prayerTimes.Fajr),
@@ -165,9 +168,9 @@ const PrayerTimeScreen = ({ navigation }) => {
       </View>
 
       {/* Location Info */}
-      <View style={styles.locationInfo}>
+      {/* <View style={styles.locationInfo}>
         <LocationWrapper />
-      </View>
+      </View> */}
 
       {/* Date Info */}
       <View style={styles.dateInfo}>
