@@ -13,6 +13,7 @@ import SurahDetailScreen from "../screens/SurahDetailScreen";
 import CalendarScreen from "../screens/CalendarScreen";
 import QuizScreen from "../screens/QuizScreen";
 import Settings from "../screens/Settings";
+import ReferralScreen from "../screens/ReferralScreen"
 
 const Stack = createStackNavigator();
 
@@ -31,6 +32,7 @@ const App = () => {
             <Stack.Screen name="Calender" component={CalendarScreen} />
             <Stack.Screen name="Quiz" component={QuizScreen} />
             <Stack.Screen name="Setting" component={Settings} />
+            <Stack.Screen name="Referral" component={ReferralScreen} />
           </Stack.Navigator>
         </NavigationContainer>
       </NavigationIndependentTree>

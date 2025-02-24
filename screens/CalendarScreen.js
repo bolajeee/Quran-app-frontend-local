@@ -255,24 +255,24 @@ const CalendarScreen = ({ navigation }) => {
         <Text style={[styles.dateDetailsTitle, { color: theme.textColor }]}>
           Date Details
         </Text>
-        <View style={styles.dateRow}>
-          <Text style={[styles.dateLabel, { color: theme.textSecondary }]}>
+          <View style={styles.dateRow}>
+            <Text style={[styles.dateLabel, { color: theme.textSecondary }]}>
             Gregorian:
-          </Text>
-          <Text style={[styles.dateValue, { color: theme.textColor }]}>
+            </Text>
+            <Text style={[styles.dateValue, { color: theme.textColor }]}>
             {gregorianDate}
-          </Text>
-        </View>
-        <View style={styles.dateRow}>
-          <Text style={[styles.dateLabel, { color: theme.textSecondary }]}>
+            </Text>
+          </View>
+          <View style={styles.dateRow}>
+            <Text style={[styles.dateLabel, { color: theme.textSecondary }]}>
             Hijra:
-          </Text>
-          <Text style={[styles.dateValue, { color: theme.textColor }]}>
+            </Text>
+            <Text style={[styles.dateValue, { color: theme.textColor }]}>
             {hijriDateStr}
-          </Text>
+            </Text>
           <Text style={[styles.dateValue, { color: theme.textColor }]}>
             {hijriMonthName} {monthDescription && `- ${monthDescription}`}
-          </Text>
+                </Text>
         </View>
       </View>
     );

@@ -45,6 +45,9 @@ const WelcomeScreen = ({ navigation }) => {
   const handleSettingNavigation = () => {
     navigation.navigate("Setting");
   };
+  const handleReferralNavigation = () => {
+    navigation.navigate("Referral");
+  };
 
   const surahs = [
     {
@@ -220,8 +223,18 @@ const WelcomeScreen = ({ navigation }) => {
             Profile
           </Text>
         </TouchableOpacity>
+
+      
+
       </View>
-    </SafeAreaView>
+  <View>
+      <TouchableOpacity onPress={handleReferralNavigation}>
+        <Text>
+        referral
+        </Text>
+        </TouchableOpacity>
+        </View>
+        </SafeAreaView>
   );
 };
 
