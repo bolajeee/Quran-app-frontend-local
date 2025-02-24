@@ -1,104 +1,95 @@
 import React, { useState, useEffect } from "react";
-import { View, Text, TouchableOpacity, ActivityIndicator } from "react-native";
+import {
+  View,
+  Text,
+  TouchableOpacity,
+  ActivityIndicator,
+  StyleSheet,
+} from "react-native";
 import { useTheme } from "../components/themeContext";
 import { Colors } from "../components/styles";
-// import './Calendar.css';
+import momentHijra from "moment-hijri"; // Import moment-hijri for Hijri date conversion
+
+const { primary, secondary, tertiary, darkLight, brand, green, red } = Colors;
 
 const CalendarScreen = ({ navigation }) => {
   const { theme } = useTheme();
   const [currentDate, setCurrentDate] = useState(new Date());
   const [selectedDate, setSelectedDate] = useState(new Date());
-  const [hijriDate, setHijriDate] = useState(null);
   const [islamicHolidays, setIslamicHolidays] = useState([]);
   const [calendarData, setCalendarData] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const today = new Date();
+  const [hijriDate, setHijriDate] = useState({
+    day: "",
+    month: "",
+    year: "",
+    weekday: "",
+  });
 
-  // Fetch Hijri date when selected date changes
-  useEffect(() => {
-    const fetchHijriDate = async () => {
-      try {
-        const formattedDate = `${selectedDate.getFullYear()}-${
-          selectedDate.getMonth() + 1
-        }-${selectedDate.getDate()}`;
+  // Helper to format numbers with zero-padding if needed
+  const formatNumber = (number) => (number < 10 ? `0${number}` : number);
 
-        const response = await fetch(
-          `http://api.aladhan.com/v1/gToH/${formattedDate}`
-        );
-        const data = await response.json();
-
-        if (data.code === 200 && data.data) {
-          setHijriDate({
-            day: data.data.hijri.day,
-            month: data.data.hijri.month.en,
-            year: data.data.hijri.year,
-            weekday: data.data.hijri.weekday.en,
-          });
-        }
-      } catch (error) {
-        console.error("Error fetching Hijri date:", error);
-      }
-    };
-
-    fetchHijriDate();
-  }, [selectedDate]);
-
-  // Fetch Islamic holidays when month changes
+  // ----------------------------
+  // Islamic Holidays Fetching using Calendarific API
+  // ----------------------------
   useEffect(() => {
     const fetchIslamicHolidays = async () => {
       try {
-        // Get the first day of current month
-        const firstDay = new Date(
-          currentDate.getFullYear(),
-          currentDate.getMonth(),
-          1
-        );
-        const formattedDate = `${firstDay.getFullYear()}-${
-          firstDay.getMonth() + 1
-        }-${firstDay.getDate()}`;
-
-        const response = await fetch(
-          `http://api.aladhan.com/v1/hijriCalendar/${firstDay.getFullYear()}/${
-            firstDay.getMonth() + 1
-          }`
-        );
+        // Replace with your actual Calendarific API key
+        const API_KEY = process.env.CALENDARIFIC_API_KEY;
+        // You can change the country code as needed (e.g., "SA" for Saudi Arabia)
+        const country = "SA";
+        const year = currentDate.getFullYear();
+        const url = `https://calendarific.com/api/v2/holidays?api_key=${API_KEY}&country=${country}&year=${year}`;
+        const response = await fetch(url);
         const data = await response.json();
-
-        if (data.code === 200 && data.data) {
-          console.log("Holidays response:", data.data); // Debug log
-          const holidays = data.data
+        if (data && data.response && data.response.holidays) {
+          // Filter holidays that are Islamic by checking the holiday type array
+          const islamicHolidays = data.response.holidays
             .filter(
-              (day) => day.hijri.holidays && day.hijri.holidays.length > 0
+              (holiday) => holiday.type && holiday.type.includes("Islamic")
             )
-            .map((day) => ({
-              name: day.hijri.holidays[0],
-              date: new Date(day.gregorian.date),
-              hijriDate: `${day.hijri.day} ${day.hijri.month.en}, ${day.hijri.year} AH`,
-            }));
-          console.log("Processed holidays:", holidays); // Debug log
-          setIslamicHolidays(holidays);
+            .map((holiday) => {
+              const gDate = new Date(holiday.date.iso);
+              // Convert Gregorian date to Hijri date using moment-hijri
+              const hDate = momentHijra(gDate).format("iD iMMMM, iYYYY AH");
+              return {
+                name: holiday.name,
+                date: gDate,
+                hijriDate: hDate,
+              };
+            });
+          setIslamicHolidays(islamicHolidays);
+        } else {
+          setError("No holidays found.");
         }
       } catch (error) {
-        console.error("Error fetching Islamic holidays:", error);
+        console.error(
+          "Error fetching Islamic holidays from Calendarific:",
+          error
+        );
+        setError("Error fetching Islamic holidays");
       }
     };
 
     fetchIslamicHolidays();
   }, [currentDate]);
 
-  // Fetch Islamic calendar data when month changes
+  // ----------------------------
+  // Gregorian Calendar Data Fetching
+  // ----------------------------
   useEffect(() => {
     const fetchCalendarData = async () => {
       try {
         setLoading(true);
         const response = await fetch(
-          `http://api.aladhan.com/v1/gToHCalendar/${
+          `http://api.aladhan.com/v1/gToHCalendar/${formatNumber(
             currentDate.getMonth() + 1
-          }/${currentDate.getFullYear()}`
+          )}/${currentDate.getFullYear()}`
         );
         const data = await response.json();
-
         if (data.code === 200) {
           setCalendarData(data.data);
           setError(null);
@@ -111,10 +102,12 @@ const CalendarScreen = ({ navigation }) => {
         setLoading(false);
       }
     };
-
     fetchCalendarData();
   }, [currentDate]);
 
+  // ----------------------------
+  // Helper Functions for Calendar
+  // ----------------------------
   const months = [
     "January",
     "February",
@@ -130,89 +123,84 @@ const CalendarScreen = ({ navigation }) => {
     "December",
   ];
 
-  const islamicMonths = [
-    "Muharram",
-    "Safar",
-    "Rabi al-Awwal",
-    "Rabi al-Thani",
-    "Jumada al-Awwal",
-    "Jumada al-Thani",
-    "Rajab",
-    "Sha'ban",
-    "Ramadan",
-    "Shawwal",
-    "Dhu'l-Qadah",
-    "Dhu'l-Hijjah",
-  ];
-
-  const getDaysInMonth = (date) => {
-    return new Date(date.getFullYear(), date.getMonth() + 1, 0).getDate();
+  // ----------------------------
+  // helper function for quran month
+  // ----------------------------
+  const hijriMonthDescriptions = {
+    Muharram: "First month and one of the four sacred months",
+    Safar: "Second month",
+    "Rabi al-Awwal": "Birth month of Prophet Muhammad",
+    "Rabi al-Thani": "Also known as Rabi al-Akhir",
+    "Jumada al-Awwal": "Fifth month",
+    "Jumada al-Thani": "Also known as Jumada al-Akhir",
+    Rajab: "Another sacred month",
+    "Sha'ban": "Eighth month",
+    Ramadan: "Month of fasting and when the Quran was revealed",
+    Shawwal: "Month of Eid al-Fitr",
+    "Dhu al-Qa'dah": "A sacred month",
+    "Dhu al-Hijjah":
+      "Final month, includes Hajj and Eid al-Adha, also a sacred",
   };
 
-  const getFirstDayOfMonth = (date) => {
-    return new Date(date.getFullYear(), date.getMonth(), 1).getDay();
-  };
+  const getDaysInMonth = (date) =>
+    new Date(date.getFullYear(), date.getMonth() + 1, 0).getDate();
+  const getFirstDayOfMonth = (date) =>
+    new Date(date.getFullYear(), date.getMonth(), 1).getDay();
 
-  const handlePrevMonth = () => {
+  const handlePrevMonth = () =>
     setCurrentDate(
       new Date(currentDate.getFullYear(), currentDate.getMonth() - 1)
     );
-  };
-
-  const handleNextMonth = () => {
+  const handleNextMonth = () =>
     setCurrentDate(
       new Date(currentDate.getFullYear(), currentDate.getMonth() + 1)
     );
-  };
 
-  const isHoliday = (date) => {
-    return islamicHolidays.find(
+  const isHoliday = (date) =>
+    islamicHolidays.find(
       (holiday) => new Date(holiday.date).toDateString() === date.toDateString()
     );
-  };
 
-  //handle navigation
-  const handlePrayerNavigation = () => {
-    navigation.navigate("Prayer");
-  };
+  // Navigation handler (if needed for other screens)
+  const handlePrayerNavigation = () => navigation.navigate("Prayer");
 
   const renderCalendar = () => {
     const daysInMonth = getDaysInMonth(currentDate);
     const firstDay = getFirstDayOfMonth(currentDate);
     const days = [];
 
-    // Add empty cells for days before the first day of the month
     for (let i = 0; i < firstDay; i++) {
       days.push(<View key={`empty-${i}`} style={styles.dayCell} />);
     }
-
-    // Add cells for each day of the month
     for (let day = 1; day <= daysInMonth; day++) {
-      const date = new Date(
+      const dateObj = new Date(
         currentDate.getFullYear(),
         currentDate.getMonth(),
         day
       );
-      const holiday = isHoliday(date);
-      const isToday = date.toDateString() === today.toDateString();
-
+      const holiday = isHoliday(dateObj);
+      const isToday = dateObj.toDateString() === today.toDateString();
       days.push(
         <TouchableOpacity
           key={day}
           style={[
             styles.dayCell,
             holiday && styles.holidayCell,
-            selectedDate?.toDateString() === date.toDateString() &&
+            selectedDate?.toDateString() === dateObj.toDateString() &&
               styles.selectedCell,
             isToday && styles.todayCell,
           ]}
-          onPress={() => setSelectedDate(date)}
+          onPress={() => {
+            if (selectedDate.toDateString() !== dateObj.toDateString()) {
+              setSelectedDate(dateObj);
+            }
+          }}
         >
           <Text
             style={[
               styles.dayText,
               holiday && styles.holidayText,
-              selectedDate?.toDateString() === date.toDateString() &&
+              selectedDate?.toDateString() === dateObj.toDateString() &&
                 styles.selectedText,
               isToday && styles.todayText,
             ]}
@@ -223,7 +211,6 @@ const CalendarScreen = ({ navigation }) => {
         </TouchableOpacity>
       );
     }
-
     return days;
   };
 
@@ -235,7 +222,6 @@ const CalendarScreen = ({ navigation }) => {
         </Text>
       );
     }
-
     return islamicHolidays.map((holiday, index) => (
       <View key={index} style={styles.holidayItem}>
         <Text style={[styles.holidayName, { color: theme.textColor }]}>
@@ -253,69 +239,78 @@ const CalendarScreen = ({ navigation }) => {
     ));
   };
 
-  // Add this new component for Islamic date details
-  const IslamicDateDetails = () => {
-    if (!selectedDate || !calendarData.length) return null;
-
-    const selectedIslamicDate = calendarData.find(
-      (day) => day.gregorian.date === selectedDate.toISOString().split("T")[0]
-    );
-
-    if (!selectedIslamicDate) return null;
-
+  // Component to display Gregorian and Hijri dates using moment-hijri
+  const DateDetails = () => {
+    const gregorianDate = selectedDate.toLocaleDateString();
+    const hijriDateStr = momentHijra(selectedDate).format("iYYYY/iM/iD");
+    const hijriMonthName = momentHijra(selectedDate).format("iMMMM");
+    const monthDescription = hijriMonthDescriptions[hijriMonthName] || "";
     return (
       <View
         style={[
-          styles.islamicDetails,
+          styles.dateDetailsContainer,
           { backgroundColor: theme.cardBackground },
         ]}
       >
-        <Text style={[styles.islamicDetailsTitle, { color: theme.textColor }]}>
-          Islamic Date Details
+        <Text style={[styles.dateDetailsTitle, { color: theme.textColor }]}>
+          Date Details
         </Text>
-        <View style={styles.islamicDetailsContent}>
-          <View style={styles.dateRow}>
-            <Text style={[styles.dateLabel, { color: theme.textSecondary }]}>
-              Hijri Date:
-            </Text>
-            <Text style={[styles.dateValue, { color: theme.textColor }]}>
-              {`${selectedIslamicDate.hijri.day} ${selectedIslamicDate.hijri.month.en} ${selectedIslamicDate.hijri.year}`}
-            </Text>
-          </View>
-          <View style={styles.dateRow}>
-            <Text style={[styles.dateLabel, { color: theme.textSecondary }]}>
-              Weekday:
-            </Text>
-            <Text style={[styles.dateValue, { color: theme.textColor }]}>
-              {selectedIslamicDate.hijri.weekday.en}
-            </Text>
-          </View>
-          {selectedIslamicDate.hijri.holidays.length > 0 && (
-            <View style={styles.holidaysContainer}>
-              <Text style={[styles.dateLabel, { color: Colors.brand }]}>
-                Islamic Holiday:
-              </Text>
-              {selectedIslamicDate.hijri.holidays.map((holiday, index) => (
-                <Text
-                  key={index}
-                  style={[styles.holidayText, { color: Colors.brand }]}
-                >
-                  {holiday}
-                </Text>
-              ))}
-            </View>
-          )}
+        <View style={styles.dateRow}>
+          <Text style={[styles.dateLabel, { color: theme.textSecondary }]}>
+            Gregorian:
+          </Text>
+          <Text style={[styles.dateValue, { color: theme.textColor }]}>
+            {gregorianDate}
+          </Text>
+        </View>
+        <View style={styles.dateRow}>
+          <Text style={[styles.dateLabel, { color: theme.textSecondary }]}>
+            Hijra:
+          </Text>
+          <Text style={[styles.dateValue, { color: theme.textColor }]}>
+            {hijriDateStr}
+          </Text>
+          <Text style={[styles.dateValue, { color: theme.textColor }]}>
+            {hijriMonthName} {monthDescription && `- ${monthDescription}`}
+          </Text>
         </View>
       </View>
     );
   };
 
+  useEffect(() => {
+    const fetchHijriDate = async () => {
+      try {
+        const formattedDate = `${selectedDate.getFullYear()}-${formatNumber(
+          selectedDate.getMonth() + 1
+        )}-${formatNumber(selectedDate.getDate())}`;
+        const response = await fetch(
+          `http://api.aladhan.com/v1/gToH/${formattedDate}`
+        );
+        const data = await response.json();
+        if (data.code === 200 && data.data) {
+          setHijriDate({
+            day: data.data.hijri.day,
+            month: data.data.hijri.month.en,
+            year: data.data.hijri.year,
+            weekday: data.data.hijri.weekday.en,
+          });
+        }
+      } catch (error) {
+        console.error("Error fetching Hijri date:", error);
+      }
+    };
+
+    fetchHijriDate();
+  }, [selectedDate]);
+
   return (
     <View
       style={[styles.container, { backgroundColor: theme.backgroundColor }]}
     >
+      {/* Navigation button (if needed) */}
       <TouchableOpacity
-        onPress={() => handlePrayerNavigation()}
+        onPress={handlePrayerNavigation}
         style={styles.closeButton}
       >
         <Text style={styles.closeButtonText}>×</Text>
@@ -331,11 +326,6 @@ const CalendarScreen = ({ navigation }) => {
           <Text style={[styles.monthYear, { color: theme.textColor }]}>
             {months[currentDate.getMonth()]} {currentDate.getFullYear()}
           </Text>
-          {hijriDate && (
-            <Text style={[styles.islamicDate, { color: theme.textColor }]}>
-              {`${hijriDate.day} ${hijriDate.month} ${hijriDate.year} AH`}
-            </Text>
-          )}
         </View>
         <TouchableOpacity onPress={handleNextMonth}>
           <Text style={[styles.navigationButton, { color: Colors.brand }]}>
@@ -361,20 +351,20 @@ const CalendarScreen = ({ navigation }) => {
           style={styles.loader}
         />
       ) : (
-        <IslamicDateDetails />
+        <DateDetails />
       )}
 
-      <View style={[styles.holidaysList, { borderTopColor: theme.border }]}>
+      {/* <View style={[styles.holidaysList, { borderTopColor: theme.border }]}>
         <Text style={[styles.holidaysTitle, { color: theme.textColor }]}>
           Islamic Holidays
         </Text>
         {renderHolidaysList()}
-      </View>
+      </View> */}
     </View>
   );
 };
 
-const styles = {
+const styles = StyleSheet.create({
   container: {
     padding: 30,
     borderRadius: 10,
@@ -396,11 +386,6 @@ const styles = {
   monthYear: {
     fontSize: 20,
     fontWeight: "bold",
-    textAlign: "center",
-  },
-  islamicDate: {
-    fontSize: 16,
-    color: "#666",
     textAlign: "center",
   },
   weekDays: {
@@ -440,6 +425,7 @@ const styles = {
   },
   selectedText: {
     color: "#fff",
+    fontWeight: "bold",
   },
   holidayDot: {
     position: "absolute",
@@ -504,25 +490,23 @@ const styles = {
     color: "#fff",
     fontWeight: "bold",
   },
-  islamicDetails: {
+  dateDetailsContainer: {
     marginTop: 20,
     padding: 16,
     borderRadius: 8,
     elevation: 2,
   },
-  islamicDetailsTitle: {
+  dateDetailsTitle: {
     fontSize: 18,
     fontWeight: "bold",
     marginBottom: 12,
     textAlign: "center",
   },
-  islamicDetailsContent: {
-    gap: 8,
-  },
   dateRow: {
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
+    marginVertical: 4,
   },
   dateLabel: {
     fontSize: 16,
@@ -531,18 +515,9 @@ const styles = {
   dateValue: {
     fontSize: 16,
   },
-  holidaysContainer: {
-    marginTop: 8,
-    alignItems: "center",
-  },
-  holidayText: {
-    fontSize: 16,
-    fontWeight: "500",
-    marginTop: 4,
-  },
   loader: {
     marginTop: 20,
   },
-};
+});
 
 export default CalendarScreen;

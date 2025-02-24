@@ -17,7 +17,9 @@ import {
 import { useTheme } from "../components/themeContext";
 import { Colors } from "../components/styles";
 import LocationComponent from "../components/locationComponent";
-// import AdhanNotification from "../components/adhanNotification";
+// Import adhan library for local prayer time calculation
+import { PrayerTimes, CalculationMethod, Coordinates } from "adhan";
+import momentHijri from "moment-hijri";
 
 const { primary, secondary, tertiary, darkLight, brand, green, red } = Colors;
 
@@ -27,92 +29,160 @@ const PrayerTimeScreen = ({ navigation }) => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [currentPrayer, setCurrentPrayer] = useState(null);
-  const [hijriDate, setHijriDate] = useState("");
-  const currentDate = new Date();
+  const [currentLocation, setCurrentLocation] = useState(null);
+  const [currentDate, setCurrentDate] = useState(new Date());
+  const hijriDate = momentHijri(currentDate).format("iYYYY/iM/iD");
 
   // Function to handle location updates from LocationComponent
-  const handleLocationUpdate = useCallback(async (latitude, longitude) => {
-    try {
-      const response = await fetch(
-        `https://api.aladhan.com/v1/timings/${currentDate.getDate()}-${currentDate.getMonth() + 1
-        }-${currentDate.getFullYear()}?latitude=${latitude}&longitude=${longitude}&method=2`
-      );
-      const data = await response.json();
-
-        if (data.code === 200) {
-          setPrayerTimes(data.data.timings);
-          setHijriDate(data.data.date.hijri.date);
-          setLoading(false);
-        } else {
-          setError("Failed to fetch prayer times");
-          setLoading(false);
-        }
+  const handleLocationUpdate = useCallback(
+    async (location) => {
+      try {
+        const { latitude, longitude } = location.coords;
+        setCurrentLocation({ latitude, longitude });
+        const coordinates = new Coordinates(latitude, longitude);
+        const params = CalculationMethod.MuslimWorldLeague();
+        const times = new PrayerTimes(coordinates, currentDate, params);
+        const calculatedTimes = {
+          Fajr: times.fajr.toLocaleTimeString(),
+          Sunrise: times.sunrise.toLocaleTimeString(),
+          Dhuhr: times.dhuhr.toLocaleTimeString(),
+          Asr: times.asr.toLocaleTimeString(),
+          Maghrib: times.maghrib.toLocaleTimeString(),
+          Isha: times.isha.toLocaleTimeString(),
+        };
+        setPrayerTimes(calculatedTimes);
+        setLoading(false);
       } catch (err) {
         console.error(err);
-        setError("Error fetching prayer times");
+        setError("Error calculating prayer times");
         setLoading(false);
       }
     },
     [currentDate]
   );
 
+  // Re-calculate prayer times when currentDate changes and location is available
+  useEffect(() => {
+    if (currentLocation) {
+      handleLocationUpdate({ coords: currentLocation });
+    }
+  }, [currentDate]);
 
-  // Function to determine the current prayer time
+  // Helper function: Convert a 12-hour time string (e.g., "05:30 AM") to 24-hour format "HH:MM"
+  const convertTo24Hour = (time12h) => {
+    const [time, modifier] = time12h.split(" ");
+    let [hours, minutes] = time.split(":");
+    if (hours === "12") {
+      hours = "00";
+    }
+    if (modifier === "PM") {
+      hours = parseInt(hours, 10) + 12;
+    }
+    hours = hours.toString().padStart(2, "0");
+    return `${hours}:${minutes}`;
+  };
+
+  // Helper function: Convert "HH:MM" string into total minutes
+  const convertToMinutes = (time24) => {
+    const [hours, minutes] = time24.split(":").map(Number);
+    return hours * 60 + minutes;
+  };
+
+  // Function to determine the current prayer time based on calculated timings
   const getCurrentPrayer = () => {
     if (!prayerTimes) return null;
-
     const now = new Date();
-    const currentTime = now.toTimeString().split(" ")[0]; // Get current time in HH:MM:SS format
-
-    const prayerTimesArray = Object.entries(prayerTimes).map(
-      ([name, time]) => ({
+    const currentTimeMinutes = now.getHours() * 60 + now.getMinutes();
+    const prayerTimesArray = Object.entries(prayerTimes).map(([name, time]) => {
+      const time24 = convertTo24Hour(time);
+      return {
         name,
-        time,
-      })
-    );
-
+        minutes: convertToMinutes(time24),
+        display: time,
+      };
+    });
+    prayerTimesArray.sort((a, b) => a.minutes - b.minutes);
+    let current = prayerTimesArray[0];
     for (let i = 0; i < prayerTimesArray.length; i++) {
-      const nextPrayer = prayerTimesArray[i];
-      const nextPrayerTime = nextPrayer.time;
-
-      if (currentTime < nextPrayerTime) {
-        return prayerTimesArray[i - 1] || prayerTimesArray[0]; // Return the last prayer if current time is before the first prayer
+      if (currentTimeMinutes >= prayerTimesArray[i].minutes) {
+        current = prayerTimesArray[i];
       }
     }
-
-    // If no next prayer found, return the last prayer of the day
-    return prayerTimesArray[prayerTimesArray.length - 1];
+    return current;
   };
 
   useEffect(() => {
-    const currentPrayer = getCurrentPrayer();
-    setCurrentPrayer(currentPrayer);
+    if (prayerTimes) {
+      const cp = getCurrentPrayer();
+      setCurrentPrayer(cp);
+    }
   }, [prayerTimes]);
 
-  const formatTime = (time) => {
-    if (!time) return "";
-    const [hours, minutes] = time.split(":");
-    const period = hours >= 12 ? "PM" : "AM";
-    const formattedHours = hours % 12 || 12;
-    return `${formattedHours}:${minutes} ${period}`;
+  // Update current prayer every minute
+  useEffect(() => {
+    const interval = setInterval(() => {
+      if (prayerTimes) {
+        setCurrentPrayer(getCurrentPrayer());
+      }
+    }, 60000);
+    return () => clearInterval(interval);
+  }, [prayerTimes]);
+
+  const formatTime = (time) => time; // Already in readable format
+
+  // Function to check if currentDate is today
+  const isToday = () => {
+    const now = new Date();
+    return (
+      now.getDate() === currentDate.getDate() &&
+      now.getMonth() === currentDate.getMonth() &&
+      now.getFullYear() === currentDate.getFullYear()
+    );
   };
 
+  // Date navigation functions: Update currentDate by subtracting or adding one day
+  const handlePrevDay = () => {
+    setCurrentDate(
+      (prevDate) =>
+        new Date(
+          prevDate.getFullYear(),
+          prevDate.getMonth(),
+          prevDate.getDate() - 1
+        )
+    );
+  };
+
+  const handleNextDay = () => {
+    setCurrentDate(
+      (prevDate) =>
+        new Date(
+          prevDate.getFullYear(),
+          prevDate.getMonth(),
+          prevDate.getDate() + 1
+        )
+    );
+  };
+
+  // Navigation functions
+  const handleHomeNavigation = () => navigation.navigate("Home");
+  const handleProfileNavigation = () => navigation.navigate("Profile");
+  const handleCalenderNavigation = () => navigation.navigate("Calender");
+  const handleQuizNavigation = () => navigation.navigate("Quiz");
+
+  // LocationWrapper: uses the LocationComponent to get dynamic location and trigger prayer time calculation.
   const LocationWrapper = () => {
     const [hasLoaded, setHasLoaded] = useState(false);
-
     const onLocationReceived = (location) => {
       if (location?.coords && !hasLoaded) {
         setHasLoaded(true);
-        handleLocationUpdate(
-          location.coords.latitude,
-          location.coords.longitude
-        );
+        handleLocationUpdate(location);
       }
     };
-
     return <LocationComponent onLocationUpdate={onLocationReceived} />;
+  };
 
-  };const prayers = prayerTimes    ? [
+  const prayers = prayerTimes
+    ? [
         {
           name: "Fajr",
           time: formatTime(prayerTimes.Fajr),
@@ -142,23 +212,11 @@ const PrayerTimeScreen = ({ navigation }) => {
       ]
     : [];
 
-  //navigation
-  const handleHomeNavigation = () => {
-    navigation.navigate("Home");
-  };
-  const handleProfileNavigation = () => {
-    navigation.navigate("Profile");
-  };
-  const handleCalenderNavigation = () => {
-    navigation.navigate("Calender");
-  };
-  const handleQuizNavigation = () => {
-    navigation.navigate("Quiz");
-  };
-
   return (
     <SafeAreaView style={{ flex: 1, backgroundColor: theme.backgroundColor }}>
       <StatusBar barStyle="light-content" />
+      {/* Get dynamic location and calculate prayer times */}
+      <LocationWrapper />
 
       {/* Header */}
       <View style={styles.header}>
@@ -167,14 +225,9 @@ const PrayerTimeScreen = ({ navigation }) => {
         </Text>
       </View>
 
-      {/* Location Info */}
-      {/* <View style={styles.locationInfo}>
-        <LocationWrapper />
-      </View> */}
-
-      {/* Date Info */}
+      {/* Date Info with Navigation Arrows */}
       <View style={styles.dateInfo}>
-        <TouchableOpacity>
+        <TouchableOpacity onPress={handlePrevDay}>
           <Ionicons name="chevron-back" size={24} color={theme.textColor} />
         </TouchableOpacity>
         <TouchableOpacity
@@ -184,24 +237,29 @@ const PrayerTimeScreen = ({ navigation }) => {
           <Text style={[styles.dateText, { color: theme.textColor }]}>
             Gregorian Calendar, {currentDate.toLocaleDateString()}
           </Text>
-          <Text style={[styles.hijriText, { color: theme.textColor }]}>
-            Hijra Calendar, {hijriDate}
-          </Text>
+          <Text
+            style={[styles.hijraText, { color: theme.textColor }]}
+          >{`Hijri Calendar, ${hijriDate}`}</Text>
+          {isToday() && <Text style={styles.todayIndicator}>Today</Text>}
         </TouchableOpacity>
-        <TouchableOpacity>
+        <TouchableOpacity onPress={handleNextDay}>
           <Ionicons name="chevron-forward" size={24} color={theme.textColor} />
         </TouchableOpacity>
       </View>
 
       {/* Current Prayer Indicator */}
-      {currentPrayer && (
+      {/* {currentPrayer && (
         <View style={styles.currentPrayerContainer}>
           <Text style={[styles.currentPrayerText, { color: theme.textColor }]}>
             Current Prayer: {currentPrayer.name}
           </Text>
-          <View style={styles.prayerIndicator} />
+          <ActivityIndicator
+            size="small"
+            color={theme.iconColor}
+            style={styles.currentPrayerIndicator}
+          />
         </View>
-      )}
+      )} */}
 
       {/* Prayer Times List */}
       <View
@@ -226,7 +284,7 @@ const PrayerTimeScreen = ({ navigation }) => {
                 <MaterialCommunityIcons
                   name={prayer.icon}
                   size={24}
-                  color={theme.textColor}
+                  color={theme.iconColor}
                 />
                 <Text style={[styles.prayerName, { color: theme.textColor }]}>
                   {prayer.name}
@@ -237,7 +295,11 @@ const PrayerTimeScreen = ({ navigation }) => {
                   {prayer.time}
                 </Text>
                 {currentPrayer && currentPrayer.name === prayer.name && (
-                  <View style={styles.activeIndicator} />
+                  <ActivityIndicator
+                    size="small"
+                    color={theme.iconColor}
+                    style={styles.currentPrayerIndicator}
+                  />
                 )}
               </View>
             </View>
@@ -281,28 +343,21 @@ const PrayerTimeScreen = ({ navigation }) => {
 };
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-  },
+  container: { flex: 1 },
   header: {
     padding: 16,
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
   },
-  headerTitle: {
-    fontSize: 28,
-    fontWeight: "bold",
-  },
+  headerTitle: { fontSize: 28, fontWeight: "bold" },
   locationInfo: {
     paddingHorizontal: 16,
     marginTop: 8,
     flexDirection: "row",
     alignItems: "center",
   },
-  locationText: {
-    fontSize: 16,
-  },
+  locationText: { fontSize: 16 },
   dateInfo: {
     flexDirection: "row",
     alignItems: "center",
@@ -311,17 +366,17 @@ const styles = StyleSheet.create({
     marginTop: 24,
     marginBottom: 24,
   },
-  dateTextContainer: {
-    alignItems: "center",
-  },
-  dateText: {
-    fontSize: 20,
-    fontWeight: "600",
-  },
-  hijriText: {
-    fontSize: 16,
-    opacity: 0.9,
+  dateTextContainer: { alignItems: "center" },
+  dateText: { fontSize: 20, fontWeight: "600" },
+  hijraText: { fontSize: 16, opacity: 0.9, marginTop: 4 },
+  todayIndicator: {
     marginTop: 4,
+    backgroundColor: brand,
+    color: "#fff",
+    paddingHorizontal: 8,
+    paddingVertical: 2,
+    borderRadius: 5,
+    fontSize: 12,
   },
   prayerList: {
     flex: 1,
@@ -336,61 +391,22 @@ const styles = StyleSheet.create({
     paddingVertical: 16,
     borderBottomWidth: 1,
   },
-  prayerLeft: {
-    flexDirection: "row",
-    alignItems: "center",
-  },
-  prayerName: {
-    fontSize: 18,
-  },
-  prayerRight: {
-    flexDirection: "row",
-    alignItems: "center",
-  },
-  prayerTime: {
-    fontSize: 16,
-    fontWeight: "500",
-  },
+  prayerLeft: { flexDirection: "row", alignItems: "center" },
+  prayerName: { fontSize: 18 },
+  prayerRight: { flexDirection: "row", alignItems: "center" },
+  prayerTime: { fontSize: 16, fontWeight: "500" },
   bottomNav: {
     flexDirection: "row",
     justifyContent: "space-around",
     padding: 16,
     borderTopWidth: 1,
   },
-  navItem: {
-    alignItems: "center",
-  },
-  navText: {
-    fontSize: 12,
-    marginTop: 4,
-  },
-  errorText: {
-    textAlign: "center",
-    fontSize: 16,
-    padding: 20,
-  },
-  currentPrayerContainer: {
-    alignItems: "center",
-    marginVertical: 20,
-  },
-  currentPrayerText: {
-    fontSize: 20,
-    fontWeight: "600",
-    marginBottom: 10,
-  },
-  prayerIndicator: {
-    width: 10,
-    height: 10,
-    borderRadius: 5,
-    backgroundColor: Colors.brand,
-  },
-  activeIndicator: {
-    width: 10,
-    height: 10,
-    borderRadius: 5,
-    backgroundColor: "red", // Change color to indicate active prayer
-    marginLeft: 8,
-  },
+  navItem: { alignItems: "center" },
+  navText: { fontSize: 12, marginTop: 4 },
+  errorText: { textAlign: "center", fontSize: 16, padding: 20 },
+  currentPrayerContainer: { alignItems: "center", marginVertical: 20 },
+  currentPrayerText: { fontSize: 20, fontWeight: "600", marginBottom: 10 },
+  currentPrayerIndicator: { marginLeft: 8 },
 });
 
 export default PrayerTimeScreen;

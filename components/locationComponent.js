@@ -11,6 +11,9 @@ const LocationComponent = ({ onLocationUpdate }) => {
   const { theme } = useTheme();
 
   useEffect(() => {
+    // If location is already set, do not run the effect again.
+    if (location) return;
+
     (async () => {
       let { status } = await Location.requestForegroundPermissionsAsync();
       if (status !== "granted") {
@@ -18,17 +21,19 @@ const LocationComponent = ({ onLocationUpdate }) => {
         return;
       }
 
-      let location = await Location.getCurrentPositionAsync({});
-      setLocation(location);
-      // Pass location to parent component
+      // Get the current location
+      let loc = await Location.getCurrentPositionAsync({});
+      setLocation(loc);
+
+      // Notify parent component of the location update
       if (onLocationUpdate) {
-        onLocationUpdate(location);
+        onLocationUpdate(loc);
       }
 
       // Get address from coordinates
       let addressResponse = await Location.reverseGeocodeAsync({
-        latitude: location.coords.latitude,
-        longitude: location.coords.longitude,
+        latitude: loc.coords.latitude,
+        longitude: loc.coords.longitude,
       });
 
       if (addressResponse.length > 0) {
@@ -36,7 +41,7 @@ const LocationComponent = ({ onLocationUpdate }) => {
         setAddress(`${addr.city}, ${addr.region}`);
       }
     })();
-  }, []);
+  }, [location]); // Runs only if 'location' is null
 
   let text = "Loading...";
   if (errorMsg) {
