@@ -61,6 +61,9 @@ const ProfileScreen = ({ route, navigation }) => {
   const handleSettingNavigation = () => {
     navigation.navigate("Setting");
   };
+   const handleReferralNavigation = () => {
+     navigation.navigate("Referral");
+   };
 
   return (
     <SafeAreaView style={{ flex: 1, backgroundColor: theme.backgroundColor }}>
@@ -195,19 +198,13 @@ const ProfileScreen = ({ route, navigation }) => {
           ))}
         </View>
 
-        <TouchableOpacity
+        <View
           style={[styles.button, { backgroundColor: theme.cardBackground }]}
-          onPress={() =>
-            navigation.navigate("SurahDetail", {
-              surah: {
-                name: "Al-Faatiha",
-                content: "This is the content of Surah Al-Faatiha.",
-              },
-            })
-          }
         >
-          <Text style={{ color: theme.textColor }}>Go to Surah Detail</Text>
-        </TouchableOpacity>
+          <TouchableOpacity onPress={handleReferralNavigation}>
+            <Text>Referrals</Text>
+          </TouchableOpacity>
+        </View>
       </ScrollView>
 
       <View

@@ -14,12 +14,14 @@ import {
   TextLink,
   TextLinkContent,
 } from "../components/styles";
+import { StyleSheet, View, Text } from "react-native";
+import { Colors } from "../components/styles";
 
 const ReferralScreen = () => {
   // Hardcoded referral code and referral link
   const [referralCode] = useState("ABC123XYZ");
   const referralLink = `https://example.com/referral/${referralCode}`;
-  
+
   // Hardcoded list of referrals
   const referrals = [
     { name: "John Doe", status: "Active" },
@@ -61,21 +63,61 @@ const ReferralScreen = () => {
             </TextLink>
           </ExtraView>
           {/* Additional Referral Information */}
-          <ExtraView style={{ marginTop: 20, flexDirection: "column", alignItems: "flex-start" }}>
+          <ExtraView
+            style={{
+              marginTop: 20,
+              flexDirection: "column",
+              alignItems: "flex-start",
+            }}
+          >
             <ExtraText>{`Total Referrals: ${currentReferralCount}`}</ExtraText>
             <ExtraText>{`Referral Bonus: ${referralBonus}`}</ExtraText>
           </ExtraView>
-          {/* List of Referrals */}
-          <ExtraView style={{ marginTop: 20, flexDirection: "column", alignItems: "flex-start" }}>
-            <ExtraText style={{ fontWeight: "bold" }}>Your Referrals:</ExtraText>
+          {/* Styled List of Referrals */}
+          <View style={localStyles.referralList}>
+            <ExtraText style={[localStyles.sectionTitle]}>
+              Your Referrals:
+            </ExtraText>
             {referrals.map((referral, index) => (
-              <ExtraText key={index}>{`${referral.name} - ${referral.status}`}</ExtraText>
+              <View key={index} style={localStyles.referralItem}>
+                <Text style={localStyles.referralText}>
+                  {referral.name} - {referral.status}
+                </Text>
+              </View>
             ))}
-          </ExtraView>
+          </View>
         </StyledFormArea>
       </InnerContainer>
     </StyledContainer>
   );
 };
+
+const localStyles = StyleSheet.create({
+  referralList: {
+    marginTop: 20,
+    padding: 15,
+    backgroundColor: "#f0f0f0",
+    borderRadius: 8,
+    width: "100%",
+  },
+  sectionTitle: {
+    fontSize: 16,
+    fontWeight: "bold",
+    marginBottom: 10,
+    color: Colors.tertiary,
+  },
+  referralItem: {
+    padding: 10,
+    marginBottom: 8,
+    borderWidth: 1,
+    borderColor: Colors.darkLight,
+    borderRadius: 5,
+    backgroundColor: "#ffffff",
+  },
+  referralText: {
+    fontSize: 16,
+    color: Colors.tertiary,
+  },
+});
 
 export default ReferralScreen;

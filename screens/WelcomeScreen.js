@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect} from "react";
 import {
   StyleSheet,
   View,
@@ -16,16 +16,27 @@ import {
 } from "@expo/vector-icons";
 import { Colors } from "../components/styles";
 import { useTheme } from "../components/themeContext";
+import DailyHadithModal from "../components/dailyHadithModal";
+
 
 const { primary, secondary, tertiary, darkLight, brand, green, red } = Colors;
 
 const WelcomeScreen = ({ navigation }) => {
   const [activeTab, setActiveTab] = useState("Light");
+  const [modalVisible, setModalVisible] = useState(false);
 
   const { theme, setIsDarkMode } = useTheme();
 
-  // Update theme based on isDarkMode. Assumes Theme has both light and dark keys.
+  //hard coded hadith
+  const dailyHadith =
+    "The best among you are those who learn the Quran and teach it.";
 
+  // Show the modal once when the component mounts
+  useEffect(() => {
+    setModalVisible(true);
+  }, []);
+
+  // Update theme based on isDarkMode. Assumes Theme has both light and dark keys.
   const handleThemeChange = (mode) => {
     setActiveTab(mode);
     setIsDarkMode(mode === "Dark");
@@ -92,6 +103,12 @@ const WelcomeScreen = ({ navigation }) => {
       style={[styles.container, { backgroundColor: theme.backgroundColor }]}
     >
       <StatusBar barStyle="light-content" />
+
+      <DailyHadithModal
+        visible={modalVisible}
+        onClose={() => setModalVisible(false)}
+        hadith={dailyHadith}
+      />
 
       {/* Header */}
       <View style={styles.header}>
@@ -223,18 +240,9 @@ const WelcomeScreen = ({ navigation }) => {
             Profile
           </Text>
         </TouchableOpacity>
-
-      
-
       </View>
-  <View>
-      <TouchableOpacity onPress={handleReferralNavigation}>
-        <Text>
-        referral
-        </Text>
-        </TouchableOpacity>
-        </View>
-        </SafeAreaView>
+    
+    </SafeAreaView>
   );
 };
 
