@@ -282,6 +282,7 @@ const styles = StyleSheet.create({
     marginHorizontal: 16,
     backgroundColor: "rgba(255,255,255,0.1)",
     borderRadius: 25,
+    alignItems: "top"
   },
   tab: {
     flex: 1,

@@ -1,21 +1,18 @@
 import React, { useState } from "react";
 import { Modal, View, TouchableOpacity, Text, StyleSheet } from "react-native";
+import { FontAwesome } from "@expo/vector-icons";
 import SlidingPuzzleGame from "./minigames/SlidingPuzzleGame";
-
+import IslamicAlphabetGame from "./minigames/IslamicAlphabetGame";
 
 const MiniGameButton = () => {
   const [modalVisible, setModalVisible] = useState(false);
-  const [gameModalVisible, setGameModalVisible] = useState(false);
-
-  const openGame = () => {
-    setModalVisible(false);
-    setGameModalVisible(true);
-  };
+  const [slidingGameVisible, setSlidingGameVisible] = useState(false);
+  const [alphabetGameVisible, setAlphabetGameVisible] = useState(false);
 
   return (
     <View style={styles.container}>
       <TouchableOpacity style={styles.button} onPress={() => setModalVisible(true)}>
-        <Text style={styles.buttonText}>Play Games</Text>
+        <FontAwesome name="gamepad" size={24} color="white" />
       </TouchableOpacity>
 
       {/* Game Selection Modal */}
@@ -23,9 +20,27 @@ const MiniGameButton = () => {
         <View style={styles.modalContainer}>
           <View style={styles.modalContent}>
             <Text style={styles.modalTitle}>Select a Game</Text>
-            <TouchableOpacity style={styles.gameButton} onPress={openGame}>
+
+            <TouchableOpacity
+              style={styles.gameButton}
+              onPress={() => {
+                setModalVisible(false);
+                setSlidingGameVisible(true);
+              }}
+            >
               <Text style={styles.gameButtonText}>Sliding Puzzle</Text>
             </TouchableOpacity>
+
+            <TouchableOpacity
+              style={styles.gameButton}
+              onPress={() => {
+                setModalVisible(false);
+                setAlphabetGameVisible(true);
+              }}
+            >
+              <Text style={styles.gameButtonText}>Islamic Alphabet</Text>
+            </TouchableOpacity>
+
             <TouchableOpacity style={styles.closeButton} onPress={() => setModalVisible(false)}>
               <Text style={styles.closeButtonText}>Close</Text>
             </TouchableOpacity>
@@ -33,11 +48,10 @@ const MiniGameButton = () => {
         </View>
       </Modal>
 
+      {/* Islamic Alphabet Game Modal */}
+      <IslamicAlphabetGame visible={alphabetGameVisible} onClose={() => setAlphabetGameVisible(false)} />
       {/* Sliding Puzzle Game Modal */}
-      <SlidingPuzzleGame
-        visible={gameModalVisible}
-        onClose={() => setGameModalVisible(false)}
-      />
+      <SlidingPuzzleGame visible={slidingGameVisible} onClose={() => setSlidingGameVisible(false)} />
     </View>
   );
 };
@@ -49,13 +63,19 @@ const styles = StyleSheet.create({
     marginTop: 20,
   },
   button: {
+    flexDirection: "row",
     backgroundColor: "#6D28D9",
     padding: 10,
-    borderRadius: 5,
+    borderRadius: "100%",
+    alignItems: "center",
+    position: "absolute",
+    zIndex: 100,
+
   },
   buttonText: {
     color: "#fff",
     fontSize: 16,
+    marginLeft: 10,
   },
   modalContainer: {
     flex: 1,

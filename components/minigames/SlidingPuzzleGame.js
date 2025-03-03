@@ -192,7 +192,6 @@ const styles = StyleSheet.create({
     width: IMAGE_SIZE / GRID_SIZE,
     height: IMAGE_SIZE / GRID_SIZE,
     borderWidth: 1,
-    borderColor: "red",
     overflow: "hidden",
   },
   emptyTile: {
