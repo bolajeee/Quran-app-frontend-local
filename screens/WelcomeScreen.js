@@ -1,4 +1,4 @@
-import React, { useState, useEffect} from "react";
+import React, { useState, useEffect } from "react";
 import {
   StyleSheet,
   View,
@@ -17,6 +17,7 @@ import {
 import { Colors } from "../components/styles";
 import { useTheme } from "../components/themeContext";
 import DailyHadithModal from "../components/dailyHadithModal";
+import MiniGameButton from "../components/miniGameButton";
 
 
 const { primary, secondary, tertiary, darkLight, brand, green, red } = Colors;
@@ -131,6 +132,12 @@ const WelcomeScreen = ({ navigation }) => {
 
       {/* Tabs */}
       <View style={styles.tabContainer}>
+
+        <View>
+          <MiniGameButton />
+        </View>
+
+
         <TouchableOpacity
           style={[styles.tab, activeTab === "Light" && styles.activeTab]}
           onPress={() => handleThemeChange("Light")}
@@ -241,7 +248,7 @@ const WelcomeScreen = ({ navigation }) => {
           </Text>
         </TouchableOpacity>
       </View>
-    
+
     </SafeAreaView>
   );
 };
