@@ -13,6 +13,7 @@ import {
   MaterialCommunityIcons,
   MaterialIcons,
   AntDesign,
+  FontAwesome,
 } from "@expo/vector-icons";
 import { useTheme } from "../components/themeContext";
 import { Colors } from "../components/styles";
@@ -336,6 +337,13 @@ const PrayerTimeScreen = ({ navigation }) => {
           <Text style={[styles.navText, { color: theme.textColor }]}>
             Profile
           </Text>
+        </TouchableOpacity>
+        <TouchableOpacity
+          style={styles.navItem}
+          onPress={() => navigation.navigate("GameList")}
+        >
+          <FontAwesome name="gamepad" size={24} color={theme.iconColor} />
+          <Text style={[styles.navText, { color: theme.darkLight }]}>Games</Text>
         </TouchableOpacity>
       </View>
     </SafeAreaView>

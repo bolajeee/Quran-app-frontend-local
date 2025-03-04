@@ -13,11 +13,12 @@ import {
   Feather,
   MaterialIcons,
   AntDesign,
+  FontAwesome,
 } from "@expo/vector-icons";
 import { Colors } from "../components/styles";
 import { useTheme } from "../components/themeContext";
 import DailyHadithModal from "../components/dailyHadithModal";
-import MiniGameButton from "../components/miniGameButton";
+
 
 
 const { primary, secondary, tertiary, darkLight, brand, green, red } = Colors;
@@ -133,10 +134,6 @@ const WelcomeScreen = ({ navigation }) => {
       {/* Tabs */}
       <View style={styles.tabContainer}>
 
-        <View>
-          <MiniGameButton />
-        </View>
-
 
         <TouchableOpacity
           style={[styles.tab, activeTab === "Light" && styles.activeTab]}
@@ -246,6 +243,13 @@ const WelcomeScreen = ({ navigation }) => {
           <Text style={[styles.navText, { color: theme.darkLight }]}>
             Profile
           </Text>
+        </TouchableOpacity>
+        <TouchableOpacity
+          style={styles.navItem}
+          onPress={() => navigation.navigate("GameList")}
+        >
+          <FontAwesome name="gamepad" size={24} color={theme.iconColor} />
+          <Text style={[styles.navText, { color: theme.darkLight }]}>Games</Text>
         </TouchableOpacity>
       </View>
 

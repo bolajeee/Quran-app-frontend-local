@@ -8,7 +8,7 @@ import {
   SafeAreaView,
   StatusBar,
 } from "react-native";
-import { Ionicons, MaterialIcons, AntDesign } from "@expo/vector-icons";
+import { Ionicons, MaterialIcons, AntDesign, FontAwesome } from "@expo/vector-icons";
 import { useTheme } from "../components/themeContext";
 import { Colors } from "../components/styles";
 
@@ -235,6 +235,13 @@ const ProfileScreen = ({ route, navigation }) => {
         >
           <MaterialIcons name="person" size={24} color={Colors.brand} />
           <Text style={[styles.navText, { color: Colors.brand }]}>Profile</Text>
+        </TouchableOpacity>
+        <TouchableOpacity
+          style={styles.navItem}
+          onPress={() => navigation.navigate("GameList")}
+        >
+          <FontAwesome name="gamepad" size={24} color={theme.iconColor} />
+          <Text style={[styles.navText, { color: theme.darkLight }]}>Games</Text>
         </TouchableOpacity>
       </View>
     </SafeAreaView>
