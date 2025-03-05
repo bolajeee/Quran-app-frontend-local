@@ -251,6 +251,12 @@ const WelcomeScreen = ({ navigation }) => {
           <FontAwesome name="gamepad" size={24} color={theme.iconColor} />
           <Text style={[styles.navText, { color: theme.darkLight }]}>Games</Text>
         </TouchableOpacity>
+
+        <TouchableOpacity onPress={() => navigation.navigate("DailyLogin")}>
+          <Text>
+            DailyLogin
+          </Text>
+        </TouchableOpacity>
       </View>
 
     </SafeAreaView>

@@ -15,6 +15,7 @@ import QuizScreen from "../screens/QuizScreen";
 import Settings from "../screens/Settings";
 import ReferralScreen from "../screens/ReferralScreen"
 import GameListScreen from "../screens/GameListScreen";
+import DailyLoginScreen from "../screens/DailyLoginScreen";
 
 const Stack = createStackNavigator();
 
@@ -35,6 +36,7 @@ const App = () => {
             <Stack.Screen name="Setting" component={Settings} />
             <Stack.Screen name="Referral" component={ReferralScreen} />
             <Stack.Screen name="GameList" component={GameListScreen} />
+            <Stack.Screen name="DailyLogin" component={DailyLoginScreen} />
           </Stack.Navigator>
         </NavigationContainer>
       </NavigationIndependentTree>
