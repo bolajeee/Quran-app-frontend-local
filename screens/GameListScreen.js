@@ -15,10 +15,12 @@ import {
 // Import game components
 import SlidingPuzzleGame from "../components/minigames/SlidingPuzzleGame";
 import IslamicAlphabetGame from "../components/minigames/IslamicAlphabetGame";
+import WordAnagramsModal from "../components/minigames/WordAnagrams";
 
 // Import game images
 import SlidingPuzzleImage from "../assets/images/sliding-puzzle-thumbnail.avif";
 import IslamicAlphabetImage from "../assets/images/islamic-alphabet-thumbnail.avif";
+import WordAnagramsImage from "../assets/images/word-anagrams-thumbnail.avif";
 
 const GAMES = [
   {
@@ -32,6 +34,12 @@ const GAMES = [
     component: IslamicAlphabetGame,
     image: IslamicAlphabetImage,
     description: "Learn Arabic letters",
+  },
+  {
+    name: "Word Anagrams",
+    component: WordAnagramsModal,
+    image: WordAnagramsImage,
+    description: "Match the words with their meanings",
   },
   // Add more games here as needed
 ];

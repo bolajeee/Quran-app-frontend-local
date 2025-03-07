@@ -41,6 +41,7 @@ export const PageTitle = styled.Text`
   font-weight: bold;
   color: ${brand};
   padding: 10px;
+  paddingBottim: 20px;
 `;
 
 export const SubTitle = styled.Text`

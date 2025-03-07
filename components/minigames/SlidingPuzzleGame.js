@@ -7,6 +7,7 @@ import {
   Image,
   ImageBackground,
   Alert,
+  Text
 } from "react-native";
 
 import image1 from "./puzzleGameAssets/image1.avif";
@@ -150,12 +151,17 @@ const SlidingPuzzleGame = ({ visible, onClose, imagePaths = [] }) => {
           })}
         </View>
 
+
+        {/* Original Image */}
+        <Image
+          source={typeof selectedImage === "string" ? { uri: selectedImage } : selectedImage}
+          style={styles.originalImage}
+        />
+
         {/* Close Button */}
+
         <TouchableOpacity style={styles.closeButton} onPress={onClose}>
-          <Image
-            source={typeof selectedImage === "string" ? { uri: selectedImage } : selectedImage}
-            style={styles.originalImage}
-          />
+          <Text style={styles.closeButtonText}>Close</Text>
         </TouchableOpacity>
       </View>
     </Modal>
@@ -205,10 +211,11 @@ const styles = StyleSheet.create({
   closeButton: {
     marginTop: 20,
     padding: 10,
-    backgroundColor: "#6D28D9",
+    backgroundColor: "red",
     borderRadius: 5,
   },
   originalImage: {
+    marginTop:20,
     width: 100,
     height: 100,
     borderRadius: 10,
