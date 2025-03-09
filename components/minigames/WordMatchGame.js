@@ -24,7 +24,7 @@ const shuffleArray = (array) => {
   return [...array].sort(() => Math.random() - 0.5);
 };
 
-const WordAnagramsModal = ({ visible, onClose }) => {
+const WordMatchModal = ({ visible, onClose }) => {
   const [words, setWords] = useState([]);
   const [meanings, setMeanings] = useState([]);
   const [selectedWord, setSelectedWord] = useState(null);
@@ -237,4 +237,4 @@ const modalStyles = StyleSheet.create({
   },
 });
 
-export default WordAnagramsModal;
+export default WordMatchModal;
